@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Læringsteori — En praktisk guide for fagskolelærere</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1623;
+    --surface: #18243a;
+    --surface2: #1f2f47;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8edf5;
+    --muted: #7a8fa8;
+    --behaviorism: #e05c5c;
+    --constructivism: #f4a261;
+    --sociocultural: #4ecdc4;
+    --cognitivism: #9b8fe8;
+    --gold: #f7c948;
+    --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  .app { display: flex; min-height: 100vh; }
+  .sidebar { width: 280px; min-width: 280px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); }
+  .sidebar-logo .eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+  .sidebar-logo h1 { font-family: 'DM Serif Display', serif; font-size: 17px; line-height: 1.3; color: var(--white); }
+  .sidebar-logo h1 span { color: var(--sociocultural); }
+  .progress-section { padding: 18px 24px; border-bottom: 1px solid var(--border); }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
+  .progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sociocultural), #7ee8e2); border-radius: 2px; transition: width 0.5s ease; width: 0%; }
+  .nav-section { padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .nav-section-label { padding: 0 24px 10px; font-size: 10px; font-weight: 600; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.2s; font-size: 13.5px; color: var(--muted); font-weight: 400; user-select: none; }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active { border-left-color: var(--accent-color, var(--sociocultural)); color: var(--text); background: rgba(255,255,255,0.05); font-weight: 500; }
+  .nav-item.completed { color: var(--text); }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-color, #3a4a60); flex-shrink: 0; transition: all 0.3s; }
+  .nav-item.active .nav-dot { box-shadow: 0 0 0 3px rgba(78,205,196,0.25); }
+  .nav-item.completed .nav-dot { background: var(--accent-color); }
+  .nav-check { font-size: 11px; color: var(--sociocultural); margin-left: auto; opacity: 0; transition: opacity 0.3s; }
+  .nav-item.completed .nav-check { opacity: 1; }
+  .main { margin-left: 280px; flex: 1; }
+  .section { display: none; min-height: 100vh; }
+  .section.active { display: block; }
+  .hero { background: linear-gradient(160deg, #0f1623 0%, #1a2744 50%, #0f1623 100%); padding: 80px 64px 60px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(78,205,196,0.08) 0%, transparent 70%); pointer-events: none; }
+  .hero::after { content: ''; position: absolute; bottom: -50px; left: 200px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(155,143,232,0.07) 0%, transparent 70%); pointer-events: none; }
+  .hero-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 3px; color: var(--sociocultural); text-transform: uppercase; margin-bottom: 20px; }
+  .hero h2 { font-family: 'DM Serif Display', serif; font-size: 52px; line-height: 1.15; color: var(--white); margin-bottom: 20px; max-width: 600px; }
+  .hero h2 em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: 16px; color: var(--muted); max-width: 560px; line-height: 1.7; margin-bottom: 36px; }
+  .theory-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
+  .chip { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1px solid; cursor: pointer; transition: all 0.2s; }
+  .chip:hover { opacity: 0.85; transform: translateY(-1px); }
+  .start-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--sociocultural); color: #0a1a18; padding: 14px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px; }
+  .start-btn:hover { background: #5de0d6; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(78,205,196,0.25); }
+  .content-area { padding: 52px 64px; max-width: 900px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+  .card-title { font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+  .card p { font-size: 15px; line-height: 1.75; color: #c5d0df; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0; }
+  .concept-pill { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--text); cursor: pointer; transition: all 0.18s ease; position: relative; user-select: none; }
+  .concept-pill:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
+  .concept-pill:hover .pill-hint { opacity: 1; }
+  .concept-pill .pill-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
+  .concept-pill .pill-def { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .pill-hint { font-size: 10px; color: var(--muted); margin-top: 8px; opacity: 0; transition: opacity 0.15s; font-style: italic; }
+  .pill-click-icon { font-size: 10px; opacity: 0.45; flex-shrink: 0; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(5,10,20,0.78); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 36px; max-width: 520px; width: 100%; box-shadow: 0 24px 60px rgba(0,0,0,0.5); transform: translateY(12px) scale(0.98); transition: transform 0.22s ease; position: relative; max-height: 90vh; overflow-y: auto; }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-close { position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; line-height: 1; }
+  .modal-close:hover { color: var(--white); border-color: rgba(255,255,255,0.2); }
+  .modal-tag { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; display: inline-block; padding: 3px 10px; border-radius: 20px; }
+  .modal-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--white); margin-bottom: 10px; line-height: 1.2; }
+  .modal-def { font-size: 15px; color: #c5d0df; line-height: 1.7; margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+  .modal-example-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .modal-example-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .modal-example { background: var(--surface2); border-radius: 10px; padding: 18px; margin-bottom: 12px; border-left: 3px solid var(--modal-color, var(--sociocultural)); }
+  .modal-example .ex-scenario { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+  .modal-example .ex-text { font-size: 13px; color: #a8bbd0; line-height: 1.65; }
+  .modal-example .ex-icon { font-size: 18px; margin-bottom: 8px; display: block; }
+  .tool-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .tool-row:last-child { border-bottom: none; }
+  .tool-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: var(--surface2); }
+  .tool-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .tool-info p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .reflection-box { background: linear-gradient(135deg, rgba(247,201,72,0.08), rgba(247,201,72,0.03)); border: 1px solid rgba(247,201,72,0.2); border-radius: 12px; padding: 28px; margin: 24px 0; }
+  .reflection-box .ref-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .reflection-box h3 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--white); margin-bottom: 16px; }
+  .reflection-box textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 14px; resize: vertical; min-height: 90px; line-height: 1.6; transition: border-color 0.2s; }
+  .reflection-box textarea:focus { outline: none; border-color: rgba(247,201,72,0.4); }
+  .reflection-box textarea::placeholder { color: var(--muted); }
+  .save-note-btn { margin-top: 10px; padding: 8px 18px; background: rgba(247,201,72,0.15); border: 1px solid rgba(247,201,72,0.3); border-radius: 6px; color: var(--gold); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .save-note-btn:hover { background: rgba(247,201,72,0.25); }
+  .saved-msg { font-size: 12px; color: var(--gold); margin-top: 8px; opacity: 0; transition: opacity 0.3s; }
+  .quiz-wrapper { max-width: 680px; }
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 16px; }
+  .quiz-q .q-num { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .quiz-q .q-text { font-size: 16px; font-weight: 500; color: var(--white); margin-bottom: 18px; line-height: 1.55; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; transition: all 0.2s; font-size: 14px; color: var(--text); user-select: none; }
+  .quiz-option:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
+  .quiz-option.selected { border-color: var(--sociocultural); background: rgba(78,205,196,0.08); }
+  .quiz-option.correct { border-color: #4ade80; background: rgba(74,222,128,0.08); color: #4ade80; }
+  .quiz-option.wrong { border-color: #f87171; background: rgba(248,113,113,0.08); color: #f87171; }
+  .opt-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--muted); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+  .quiz-option.selected .opt-circle { border-color: var(--sociocultural); background: rgba(78,205,196,0.2); }
+  .quiz-option.correct .opt-circle { border-color: #4ade80; background: rgba(74,222,128,0.2); }
+  .quiz-option.wrong .opt-circle { border-color: #f87171; }
+  .quiz-feedback { font-size: 13px; padding: 10px 14px; border-radius: 7px; margin-top: 12px; line-height: 1.55; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(74,222,128,0.08); color: #86efac; border: 1px solid rgba(74,222,128,0.2); }
+  .quiz-feedback.wrong { background: rgba(248,113,113,0.08); color: #fca5a5; border: 1px solid rgba(248,113,113,0.2); }
+  .check-btn { padding: 12px 26px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; margin-top: 8px; }
+  .check-btn:hover { background: rgba(255,255,255,0.08); }
+  .check-btn.answered { opacity: 0.5; cursor: default; }
+  .quiz-score-box { background: linear-gradient(135deg, rgba(78,205,196,0.1), rgba(78,205,196,0.03)); border: 1px solid rgba(78,205,196,0.2); border-radius: 12px; padding: 28px; text-align: center; margin-top: 24px; display: none; }
+  .quiz-score-box.show { display: block; }
+  .score-big { font-family: 'DM Serif Display', serif; font-size: 60px; color: var(--white); }
+  .score-sub { color: var(--muted); font-size: 15px; margin-top: 8px; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .compare-table th { padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .compare-table td { padding: 13px 16px; border-top: 1px solid var(--border); color: #c5d0df; line-height: 1.5; vertical-align: top; }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .th-label { background: var(--surface); }
+  .td-label { font-weight: 600; color: var(--text); background: rgba(255,255,255,0.02); }
+  .next-btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 26px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 36px; }
+  .next-btn:hover { transform: translateY(-1px); }
+  .scenario-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 14px; }
+  .scenario-card .sc-tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+  .scenario-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .scenario-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+  .sc-reveal { margin-top: 14px; padding: 14px; border-radius: 8px; font-size: 13.5px; line-height: 1.65; display: none; border-left: 3px solid; }
+  .sc-reveal.show { display: block; }
+  .sc-toggle { margin-top: 12px; padding: 7px 16px; border-radius: 6px; border: 1px solid var(--border); background: none; color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .sc-toggle:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .notes-summary { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+  .notes-summary h3 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 4px; }
+  .notes-summary .theory-color { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .note-text { font-size: 14px; color: var(--muted); font-style: italic; line-height: 1.6; }
+  .no-note { font-size: 13px; color: rgba(255,255,255,0.2); }
+  .thinker-row { display: flex; gap: 12px; margin: 14px 0; }
+  .thinker { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .thinker h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .thinker p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .flow-row { display: flex; align-items: center; gap: 0; margin: 20px 0; }
+  .flow-box { padding: 12px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; flex: 1; line-height: 1.35; }
+  .flow-arrow { font-size: 18px; color: var(--muted); padding: 0 8px; flex-shrink: 0; }
+  .welcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 32px 0; }
+  .welcome-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; cursor: pointer; transition: all 0.2s; }
+  .welcome-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-2px); background: var(--surface2); }
+  .welcome-card .wc-icon { font-size: 28px; margin-bottom: 12px; }
+  .welcome-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .welcome-card p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .welcome-card .wc-badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+  [data-tip] { position: relative; cursor: help; border-bottom: 1px dashed var(--muted); }
+  [data-tip]:hover::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 12px; padding: 6px 12px; border-radius: 6px; white-space: normal; pointer-events: none; z-index: 50; max-width: 260px; text-align: center; line-height: 1.5; }
+  .note-history { margin-top: 14px; }
+  .note-entry { border-left: 3px solid rgba(255,255,255,0.08); padding: 10px 14px; margin-bottom: 8px; position: relative; }
+  .note-entry .ne-ts { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+  .note-entry .ne-ts .ne-badge { padding: 1px 7px; border-radius: 10px; font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .note-entry .ne-text { font-size: 14px; color: #c5d0df; line-height: 1.65; font-style: italic; }
+  .note-entry .ne-del { position: absolute; top: 8px; right: 0; font-size: 11px; color: var(--muted); cursor: pointer; background: none; border: none; padding: 2px 6px; border-radius: 4px; font-family: 'DM Sans', sans-serif; opacity: 0; transition: opacity 0.15s; }
+  .note-entry:hover .ne-del { opacity: 1; }
+  .note-entry .ne-del:hover { color: #f87171; }
+  .note-history-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; display: flex; align-items: center; gap: 8px; }
+  .note-history-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .return-banner { background: linear-gradient(135deg, rgba(78,205,196,0.12), rgba(78,205,196,0.04)); border: 1px solid rgba(78,205,196,0.25); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; font-size: 14px; color: var(--text); }
+  .return-banner .rb-icon { font-size: 24px; flex-shrink: 0; }
+  .return-banner strong { color: var(--sociocultural); }
+  /* Mobile */
+  .mobile-header { display: none; position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 200; align-items: center; justify-content: space-between; padding: 0 16px; }
+  .mobile-header-title { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--white); }
+  .mobile-header-title span { color: var(--sociocultural); }
+  .hamburger { width: 40px; height: 40px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; flex-shrink: 0; }
+  .hamburger span { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.25s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-progress { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 149; opacity: 0; transition: opacity 0.25s; }
+  .sidebar-overlay.open { opacity: 1; }
+  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding: 8px 4px calc(8px + env(safe-area-inset-bottom)); justify-content: space-around; }
+  .bnav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 8px; border-radius: 8px; cursor: pointer; transition: all 0.15s; min-width: 44px; border: none; background: none; font-family: 'DM Sans', sans-serif; }
+  .bnav-item .bnav-icon { font-size: 20px; line-height: 1; }
+  .bnav-item .bnav-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+  .bnav-item.active .bnav-label { color: var(--sociocultural); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .section.active .content-area, .section.active .hero { animation: fadeIn 0.35s ease; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  @media (max-width: 900px) { .sidebar { width: 240px; min-width: 240px; } .main { margin-left: 240px; } .hero { padding: 50px 36px 40px; } .content-area { padding: 36px; } .hero h2 { font-size: 38px; } .two-col, .welcome-grid { grid-template-columns: 1fr; } .concept-grid { grid-template-columns: 1fr 1fr; } .thinker-row { flex-direction: column; } }
+  @media (max-width: 640px) {
+    .mobile-header { display: flex; } .bottom-nav { display: flex; } .sidebar-overlay { display: block; pointer-events: none; }
+    .sidebar { width: 280px; min-width: 280px; transform: translateX(-100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); top: 0; z-index: 150; }
+    .sidebar.drawer-open { transform: translateX(0); } .sidebar-overlay.open { pointer-events: all; }
+    .main { margin-left: 0; padding-top: 56px; padding-bottom: 72px; }
+    .hero { padding: 28px 20px 24px; } .hero-eyebrow { font-size: 10px; margin-bottom: 12px; } .hero h2 { font-size: 26px; line-height: 1.2; margin-bottom: 12px; } .hero-sub { font-size: 14px; margin-bottom: 24px; }
+    .theory-chips { gap: 7px; margin-bottom: 24px; } .chip { font-size: 11px; padding: 5px 12px; } .start-btn { padding: 12px 22px; font-size: 13px; width: 100%; justify-content: center; }
+    .content-area { padding: 20px 16px 24px; max-width: 100%; } .card { padding: 18px 16px; margin-bottom: 14px; } .card p { font-size: 14px; }
+    .two-col, .welcome-grid { grid-template-columns: 1fr; gap: 12px; } .concept-grid { grid-template-columns: 1fr 1fr; gap: 8px; } .concept-pill { padding: 10px 12px; }
+    .flow-row { flex-direction: column; align-items: stretch; gap: 4px; } .flow-arrow { transform: rotate(90deg); text-align: center; padding: 2px 0; font-size: 20px; } .flow-box { font-size: 12px; padding: 10px 14px; }
+    .thinker-row { flex-direction: column; gap: 10px; } .thinker { padding: 14px; } .tool-row { gap: 10px; padding: 12px 0; } .tool-icon { width: 32px; height: 32px; font-size: 14px; }
+    .reflection-box { padding: 20px 16px; } .reflection-box h3 { font-size: 17px; }
+    .next-btn { width: 100%; justify-content: center; font-size: 13px; padding: 13px 20px; }
+    .compare-table { min-width: 560px; } .compare-table th, .compare-table td { padding: 10px 12px; font-size: 12px; }
+    .scenario-card { padding: 18px 16px; } .quiz-q { padding: 20px 16px; } .quiz-option { padding: 11px 14px; font-size: 13px; }
+    .modal { padding: 24px 18px; border-radius: 14px 14px 0 0; margin: 0; max-width: 100%; width: 100%; max-height: 85vh; position: fixed; bottom: 0; }
+    .modal-overlay { align-items: flex-end; } .modal-title { font-size: 22px; } .modal-def { font-size: 14px; }
+    .quiz-score-box { padding: 24px 16px; } .score-big { font-size: 48px; } .notes-summary { padding: 20px 16px; }
+  }
+  @media (max-width: 380px) { .concept-grid { grid-template-columns: 1fr; } .hero h2 { font-size: 22px; } .bnav-item .bnav-label { display: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Mobilhode -->
+  <header class="mobile-header">
+    <div class="mobile-header-title">Lærings<span>teorier</span></div>
+    <div class="mobile-progress"><span id="mob-pct">0%</span></div>
+    <div class="hamburger" id="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeDrawer()"></div>
+
+  <!-- Sidemeny -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="eyebrow">Faglig utvikling</div>
+      <h1>Lærings<span>teorier</span><br>i praksis</h1>
+    </div>
+    <div class="progress-section">
+      <div class="progress-label"><span>Din fremgang</span><span id="prog-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Introduksjon</div>
+      <div class="nav-item active" onclick="goto('intro')" id="nav-intro" style="--accent-color: var(--sociocultural)"><div class="nav-dot"></div> Velkommen &amp; oversikt<span class="nav-check">✓</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">De fire teoriene</div>
+      <div class="nav-item" onclick="goto('behaviorism')" id="nav-behaviorism" style="--accent-color: var(--behaviorism)"><div class="nav-dot"></div> Behaviorisme<span class="nav-check">✓</span></div>
+      <div class="nav-item" onclick="goto('constructivism')" id="nav-constructivism" style="--accent-color: var(--constructivism)"><div class="nav-dot"></div> Konstruktivisme<span class="nav-check">✓</span></div>
+      <div class="nav-item" onclick="goto('sociocultural')" id="nav-sociocultural" style="--accent-color: var(--sociocultural)"><div class="nav-dot"></div> Sosiokulturell teori<span class="nav-check">✓</span></div>
+      <div class="nav-item" onclick="goto('cognitivism')" id="nav-cognitivism" style="--accent-color: var(--cognitivism)"><div class="nav-dot"></div> Kognitivisme<span class="nav-check">✓</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Anvend &amp; reflekter</div>
+      <div class="nav-item" onclick="goto('compare')" id="nav-compare" style="--accent-color: var(--gold)"><div class="nav-dot"></div> Sammenligning &amp; scenarioer<span class="nav-check">✓</span></div>
+      <div class="nav-item" onclick="goto('quiz')" id="nav-quiz" style="--accent-color: #7dd3fc"><div class="nav-dot"></div> Kunnskapssjekk<span class="nav-check">✓</span></div>
+      <div class="nav-item" onclick="goto('summary')" id="nav-summary" style="--accent-color: var(--gold)"><div class="nav-dot"></div> Mine notater &amp; oppsummering<span class="nav-check">✓</span></div>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- ═══ INTRO ═══ -->
+    <section class="section active" id="sec-intro">
+      <div class="hero">
+        <div class="hero-eyebrow">Faglig utvikling for fagskolelærere</div>
+        <h2>Læringsteori — og hva det betyr <em>for deg</em> som lærer</h2>
+        <p class="hero-sub">Denne interaktive guiden tar deg gjennom de fire grunnleggende læringsteoriene enhver lærer bør kjenne til. Du utforsker ideene, møter sentrale teoretikere, og oppdager konkrete verktøy du kan bruke i undervisningen din.</p>
+        <div class="theory-chips">
+          <div class="chip" onclick="goto('behaviorism')" style="color:var(--behaviorism);border-color:var(--behaviorism);background:rgba(224,92,92,0.08)">Behaviorisme</div>
+          <div class="chip" onclick="goto('constructivism')" style="color:var(--constructivism);border-color:var(--constructivism);background:rgba(244,162,97,0.08)">Konstruktivisme</div>
+          <div class="chip" onclick="goto('sociocultural')" style="color:var(--sociocultural);border-color:var(--sociocultural);background:rgba(78,205,196,0.08)">Sosiokulturell teori</div>
+          <div class="chip" onclick="goto('cognitivism')" style="color:var(--cognitivism);border-color:var(--cognitivism);background:rgba(155,143,232,0.08)">Kognitivisme</div>
+        </div>
+        <button class="start-btn" onclick="goto('behaviorism')">Start læringen <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="content-area">
+        <div class="card" style="border-color:rgba(78,205,196,0.2)">
+          <div class="card-title" style="color:var(--sociocultural)">Slik bruker du ressursen</div>
+          <p>Gå gjennom hver teori i ditt eget tempo. Bruk <strong style="color:var(--white)">refleksjonsspørsmålene</strong> til å koble ideene til din egen undervisning. Avslutt med <strong style="color:var(--white)">Kunnskapssjekken</strong>, og se alle notatene dine under <strong style="color:var(--white)">Mine notater &amp; oppsummering</strong>.</p>
+        </div>
+        <div class="welcome-grid">
+          <div class="welcome-card" onclick="goto('behaviorism')"><div class="wc-badge" style="background:rgba(224,92,92,0.15);color:var(--behaviorism)">01</div><div class="wc-icon">🧠</div><h3>Behaviorisme</h3><p>Hvordan synlig atferd formes av belønning, straff og repetisjoner.</p></div>
+          <div class="welcome-card" onclick="goto('constructivism')"><div class="wc-badge" style="background:rgba(244,162,97,0.15);color:var(--constructivism)">02</div><div class="wc-icon">🔨</div><h3>Konstruktivisme</h3><p>Hvordan elever aktivt bygger kunnskap gjennom egne erfaringer.</p></div>
+          <div class="welcome-card" onclick="goto('sociocultural')"><div class="wc-badge" style="background:rgba(78,205,196,0.15);color:var(--sociocultural)">03</div><div class="wc-icon">🤝</div><h3>Sosiokulturell teori</h3><p>Hvordan læring skjer gjennom sosial interaksjon, språk og samarbeid.</p></div>
+          <div class="welcome-card" onclick="goto('cognitivism')"><div class="wc-badge" style="background:rgba(155,143,232,0.15);color:var(--cognitivism)">04</div><div class="wc-icon">⚙️</div><h3>Kognitivisme</h3><p>Hvordan hjernen tar imot, bearbeider, lagrer og henter frem informasjon.</p></div>
+        </div>
+        <button class="next-btn" onclick="goto('behaviorism')" style="background:var(--sociocultural);color:#0a1a18">Begynn med behaviorisme <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ═══ BEHAVIORISME ═══ -->
+    <section class="section" id="sec-behaviorism">
+      <div class="hero" style="background:linear-gradient(160deg,#1a0f0f 0%,#2a1414 50%,#1a0f0f 100%)">
+        <div class="hero-eyebrow" style="color:var(--behaviorism)">Teori 01 — Behaviorisme</div>
+        <h2>Læring er en endring i <em style="color:var(--behaviorism)">observerbar atferd</em></h2>
+        <p class="hero-sub">Behaviorismen fokuserer utelukkende på det som kan sees og måles. Indre mentale tilstander er irrelevante — det som teller er sammenhengen mellom stimulus, respons og forsterkning.</p>
+        <div class="theory-chips">
+          <div class="chip" style="color:var(--behaviorism);border-color:var(--behaviorism);background:rgba(224,92,92,0.08)">Stimulus–Respons</div>
+          <div class="chip" style="color:var(--behaviorism);border-color:var(--behaviorism);background:rgba(224,92,92,0.08)">Betinging</div>
+          <div class="chip" style="color:var(--behaviorism);border-color:var(--behaviorism);background:rgba(224,92,92,0.08)">Forsterkning</div>
+          <div class="chip" style="color:var(--behaviorism);border-color:var(--behaviorism);background:rgba(224,92,92,0.08)">Forming</div>
+        </div>
+      </div>
+      <div class="content-area">
+        <div class="card" style="border-left:3px solid var(--behaviorism)">
+          <div class="card-title" style="color:var(--behaviorism)">Hvordan skjer læring?</div>
+          <p>Læring skjer når en atferd knyttes konsekvent til en <span data-tip="En stimulus er en hendelse eller et signal fra omgivelsene som utløser en respons.">stimulus</span>. Positive konsekvenser (forsterkning) gjør atferd mer sannsynlig; negative konsekvenser (straff) reduserer den. Gjennom repetisjon og tilbakemelding formes og opprettholdes ny atferd.</p>
+        </div>
+        <div class="flow-row">
+          <div class="flow-box" style="background:rgba(224,92,92,0.15);color:var(--behaviorism)">Stimulus<br><small style="opacity:.7;font-weight:400">Inndata / utløser</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box" style="background:rgba(224,92,92,0.1);color:var(--text)">Respons<br><small style="opacity:.7;font-weight:400">Observerbar atferd</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box" style="background:rgba(224,92,92,0.2);color:var(--behaviorism)">Forsterkning ±<br><small style="opacity:.7;font-weight:400">Utfall / konsekvens</small></div>
+        </div>
+        <div class="card-title" style="color:var(--muted);margin:24px 0 10px">Sentrale teoretikere</div>
+        <div class="thinker-row">
+          <div class="thinker" style="border-left:3px solid var(--behaviorism)"><h4>Ivan Pavlov</h4><p>Oppdaget <em>klassisk betinging</em> gjennom sine hundeforsøk — ved å pare en nøytral stimulus med mat til stimulusen alene utløste spyttsekresjon.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--behaviorism)"><h4>B.F. Skinner</h4><p>Utviklet <em>operant betinging</em>: atferd formes av konsekvensene. Positiv forsterkning styrker atferd; straff svekker den.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--behaviorism)"><h4>John B. Watson</h4><p>Grunnla behaviorismen som retning. Mente psykologi kun skulle fokusere på observerbar atferd, ikke indre mentale tilstander.</p></div>
+        </div>
+        <div class="card-title" style="color:var(--muted);margin:28px 0 10px">Nøkkelbegreper</div>
+        <div class="concept-grid">
+          <div class="concept-pill" onclick="openConcept('klassisk-betinging')" style="border-left:2px solid var(--behaviorism)"><div class="pill-label" style="color:var(--behaviorism)">Klassisk betinging <span class="pill-click-icon">↗</span></div><div class="pill-def">Læring gjennom gjentatt sammenkobling av stimuli (Pavlovs hunder).</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('operant-betinging')" style="border-left:2px solid var(--behaviorism)"><div class="pill-label" style="color:var(--behaviorism)">Operant betinging <span class="pill-click-icon">↗</span></div><div class="pill-def">Atferd formes av belønning og straff (Skinner).</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('positiv-forsterkning')" style="border-left:2px solid var(--behaviorism)"><div class="pill-label" style="color:var(--behaviorism)">Positiv forsterkning <span class="pill-click-icon">↗</span></div><div class="pill-def">Tilføre noe ønskelig for å øke sannsynligheten for en atferd.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('negativ-forsterkning')" style="border-left:2px solid var(--behaviorism)"><div class="pill-label" style="color:var(--behaviorism)">Negativ forsterkning <span class="pill-click-icon">↗</span></div><div class="pill-def">Fjerne noe ubehagelig for å øke en atferd.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('slukking')" style="border-left:2px solid var(--behaviorism)"><div class="pill-label" style="color:var(--behaviorism)">Slukking <span class="pill-click-icon">↗</span></div><div class="pill-def">En atferd forsvinner når forsterkning konsekvent uteblir.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('forming')" style="border-left:2px solid var(--behaviorism)"><div class="pill-label" style="color:var(--behaviorism)">Forming (shaping) <span class="pill-click-icon">↗</span></div><div class="pill-def">Forsterke stegvise tilnærminger mot ønsket atferd.</div><div class="pill-hint">Klikk for eksempler</div></div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-title" style="color:var(--behaviorism)">Praktiske verktøy for klasserommet</div>
+          <div class="tool-row"><div class="tool-icon">🎯</div><div class="tool-info"><h4>Umiddelbar og spesifikk tilbakemelding</h4><p>Forsterke ønsket atferd i det øyeblikket den oppstår. «Bra — du fulgte sikkerhetssjekklisten riktig før du startet maskinen.»</p></div></div>
+          <div class="tool-row"><div class="tool-icon">📋</div><div class="tool-info"><h4>Tydelige forventninger og rutiner</h4><p>Elever lærer raskere når prosedyrene er eksplisitt formulert og konsekvent håndhevet. Sett opp regler og følg dem alltid.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">🔁</div><div class="tool-info"><h4>Drill og repetisjonsøvelser</h4><p>Repetisjon bygger automatikk. I fagopplæring betyr dette gjentatt øving på sikkerhetsrutiner, verktøybruk og tekniske prosedyrer.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">📝</div><div class="tool-info"><h4>Atferdskontrakter</h4><p>Lag skriftlige avtaler med elevene om forventet atferd og konsekvenser. Transparens reduserer konflikter.</p></div></div>
+        </div>
+        <div class="two-col">
+          <div class="card" style="border-color:rgba(74,222,128,0.2)"><div class="card-title" style="color:#4ade80">✓ Styrker</div><p>Klare, målbare resultater. Fungerer godt for prosedyreferigheter, sikkerhetsopplæring og vanebygging. Lett å anvende konsekvent.</p></div>
+          <div class="card" style="border-color:rgba(248,113,113,0.2)"><div class="card-title" style="color:#f87171">✗ Begrensninger</div><p>Ignorerer elevens indre liv. Forklarer ikke nysgjerrighet, indre motivasjon eller evnen til å løse nye problemer.</p></div>
+        </div>
+        <div class="reflection-box">
+          <div class="ref-eyebrow">✏ Refleksjon</div>
+          <h3>Hvordan viser behaviorismen seg i din undervisning?</h3>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:14px">Tenk på en nylig undervisningsøkt. Kan du identifisere øyeblikk der du brukte forsterkning eller satte opp tydelige stimulus-respons-mønstre? Hva fungerte — og hva føltes mekanisk?</p>
+          <textarea id="ref-behav" placeholder="Skriv refleksjonen din her…"></textarea><br>
+          <button class="save-note-btn" onclick="saveNote('behav', this)">Lagre notat</button>
+          <div class="saved-msg" id="saved-behav">Lagret ✓</div>
+        </div>
+        <button class="next-btn" onclick="goto('constructivism')" style="background:var(--constructivism);color:#1a0a00">Neste: Konstruktivisme <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ═══ KONSTRUKTIVISME ═══ -->
+    <section class="section" id="sec-constructivism">
+      <div class="hero" style="background:linear-gradient(160deg,#1a1005 0%,#2a1d09 50%,#1a1005 100%)">
+        <div class="hero-eyebrow" style="color:var(--constructivism)">Teori 02 — Konstruktivisme</div>
+        <h2>Elever <em style="color:var(--constructivism)">bygger</em> sin egen forståelse</h2>
+        <p class="hero-sub">Konstruktivismen hevder at kunnskap ikke overføres fra lærer til elev — den konstrueres aktivt av den lærende gjennom erfaring, utforskning og refleksjon.</p>
+        <div class="theory-chips">
+          <div class="chip" style="color:var(--constructivism);border-color:var(--constructivism);background:rgba(244,162,97,0.08)">Skjema</div>
+          <div class="chip" style="color:var(--constructivism);border-color:var(--constructivism);background:rgba(244,162,97,0.08)">Assimilasjon</div>
+          <div class="chip" style="color:var(--constructivism);border-color:var(--constructivism);background:rgba(244,162,97,0.08)">Akkomodasjon</div>
+          <div class="chip" style="color:var(--constructivism);border-color:var(--constructivism);background:rgba(244,162,97,0.08)">Ekvilibrasjon</div>
+        </div>
+      </div>
+      <div class="content-area">
+        <div class="card" style="border-left:3px solid var(--constructivism)">
+          <div class="card-title" style="color:var(--constructivism)">Hvordan skjer læring?</div>
+          <p>Når elever møter noe nytt, forsøker de å passe det inn i eksisterende <span data-tip="Et skjema er en mental struktur som hjelper oss å organisere og tolke ny informasjon.">skjemaer</span>. Passer det inn, er det <strong style="color:var(--white)">assimilasjon</strong>. Passer det ikke, må skjemaet omstruktureres — det er <strong style="color:var(--white)">akkomodasjon</strong>. Spenningen mellom disse driver læringen fremover gjennom <strong style="color:var(--white)">ekvilibrasjon</strong>.</p>
+        </div>
+        <div class="flow-row" style="margin:20px 0">
+          <div class="flow-box" style="background:rgba(244,162,97,0.15);color:var(--constructivism)">Ny erfaring<br><small style="opacity:.7;font-weight:400">Møter noe ukjent</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box" style="background:rgba(244,162,97,0.1);color:var(--text)">Assimilasjon / Akkomodasjon<br><small style="opacity:.7;font-weight:400">Passe inn eller ombygge skjema</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box" style="background:rgba(244,162,97,0.2);color:var(--constructivism)">Ekvilibrium<br><small style="opacity:.7;font-weight:400">Ny forståelse oppnådd</small></div>
+        </div>
+        <div class="card-title" style="color:var(--muted);margin:24px 0 10px">Sentrale teoretikere</div>
+        <div class="thinker-row">
+          <div class="thinker" style="border-left:3px solid var(--constructivism)"><h4>Jean Piaget</h4><p>Beskrev hvordan barn utvikler tenkning gjennom stadier, og konstruerer kunnskap gjennom samhandling med omgivelsene.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--constructivism)"><h4>John Dewey</h4><p>«Learning by doing.» Utdanning skal rotfestes i ekte erfaring og refleksjon, ikke passiv mottak av fakta.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--constructivism)"><h4>Jerome Bruner</h4><p>Fremmet oppdagelseslæring og spiralpensum — å gjenbesøke kjerneideer med stadig større dybde.</p></div>
+        </div>
+        <div class="card-title" style="color:var(--muted);margin:28px 0 10px">Nøkkelbegreper</div>
+        <div class="concept-grid">
+          <div class="concept-pill" onclick="openConcept('skjema')" style="border-left:2px solid var(--constructivism)"><div class="pill-label" style="color:var(--constructivism)">Skjema <span class="pill-click-icon">↗</span></div><div class="pill-def">Mentale rammeverk vi bruker til å organisere og tolke ny informasjon.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('assimilasjon')" style="border-left:2px solid var(--constructivism)"><div class="pill-label" style="color:var(--constructivism)">Assimilasjon <span class="pill-click-icon">↗</span></div><div class="pill-def">Ny informasjon passes inn i eksisterende skjema uten å endre det.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('akkomodasjon')" style="border-left:2px solid var(--constructivism)"><div class="pill-label" style="color:var(--constructivism)">Akkomodasjon <span class="pill-click-icon">↗</span></div><div class="pill-def">Eksisterende skjema omstruktureres for å romme ny, motstridende informasjon.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('ekvilibrasjon')" style="border-left:2px solid var(--constructivism)"><div class="pill-label" style="color:var(--constructivism)">Ekvilibrasjon <span class="pill-click-icon">↗</span></div><div class="pill-def">Drivkraften mot balanse mellom eksisterende skjemaer og nye erfaringer.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('oppdagelseslaering')" style="border-left:2px solid var(--constructivism)"><div class="pill-label" style="color:var(--constructivism)">Oppdagelseslæring <span class="pill-click-icon">↗</span></div><div class="pill-def">Elever avdekker prinsipper selv gjennom utforskning, ikke instruksjon.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('spiralpensum')" style="border-left:2px solid var(--constructivism)"><div class="pill-label" style="color:var(--constructivism)">Spiralpensum <span class="pill-click-icon">↗</span></div><div class="pill-def">Gjenbesøke begreper gjentatte ganger med økende dybde (Bruner).</div><div class="pill-hint">Klikk for eksempler</div></div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-title" style="color:var(--constructivism)">Praktiske verktøy for klasserommet</div>
+          <div class="tool-row"><div class="tool-icon">🔍</div><div class="tool-info"><h4>Problembasert læring (PBL)</h4><p>Presenter elevene for et virkelig problem før du underviser løsningen. La dem utforske, feile og konstruere forståelse før du gir innspill.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">🧪</div><div class="tool-info"><h4>Aktiver forkunnskaper</h4><p>Start timene med «Hva kan dere fra før om dette?» Ny kunnskap fester seg bedre når den kobles til det elevene allerede har i skjemaene sine.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">📐</div><div class="tool-info"><h4>Prosjektarbeid og praktiske oppgaver</h4><p>I fagopplæring er det å bygge, montere eller løse en ekte oppgave selve læringen — ikke forberedelse til læring.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">💬</div><div class="tool-info"><h4>Be elevene forklare</h4><p>Når elever formulerer forståelsen sin med egne ord, befester de den. Bruk «forklar for en partner» og «lær meg hvordan du løste det».</p></div></div>
+        </div>
+        <div class="two-col">
+          <div class="card" style="border-color:rgba(74,222,128,0.2)"><div class="card-title" style="color:#4ade80">✓ Styrker</div><p>Fremmer dyp forståelse, kreativitet og overføring av kunnskap. Elever som konstruerer kunnskap er bedre rustet til å løse nye problemer.</p></div>
+          <div class="card" style="border-color:rgba(248,113,113,0.2)"><div class="card-title" style="color:#f87171">✗ Begrensninger</div><p>Kan føles ustrukturert. Uten tilstrekkelig veiledning kan elever konstruere misforståelser. Krever god faglig tilrettelegging.</p></div>
+        </div>
+        <div class="reflection-box">
+          <div class="ref-eyebrow">✏ Refleksjon</div>
+          <h3>Når bygger elevene dine ekte forståelse?</h3>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:14px">Tenk på et tema der elevene ofte sliter. Kunne du designet en oppgave der de utforsker begrepet praktisk før du forklarer? Hvordan ville det sett ut i ditt fagområde?</p>
+          <textarea id="ref-const" placeholder="Skriv refleksjonen din her…"></textarea><br>
+          <button class="save-note-btn" onclick="saveNote('const', this)">Lagre notat</button>
+          <div class="saved-msg" id="saved-const">Lagret ✓</div>
+        </div>
+        <button class="next-btn" onclick="goto('sociocultural')" style="background:var(--sociocultural);color:#0a1a18">Neste: Sosiokulturell teori <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ═══ SOSIOKULTURELL ═══ -->
+    <section class="section" id="sec-sociocultural">
+      <div class="hero" style="background:linear-gradient(160deg,#071614 0%,#0e2422 50%,#071614 100%)">
+        <div class="hero-eyebrow" style="color:var(--sociocultural)">Teori 03 — Sosiokulturell teori</div>
+        <h2>Læring skjer <em style="color:var(--sociocultural)">mellom mennesker</em></h2>
+        <p class="hero-sub">Vygotsky hevdet at læring er grunnleggende sosial. Det en elev kan klare med støtte i dag, klarer de alene i morgen. Lærerens rolle er å bygge broen.</p>
+        <div class="theory-chips">
+          <div class="chip" style="color:var(--sociocultural);border-color:var(--sociocultural);background:rgba(78,205,196,0.08)">NUZ</div>
+          <div class="chip" style="color:var(--sociocultural);border-color:var(--sociocultural);background:rgba(78,205,196,0.08)">Stillasbygging</div>
+          <div class="chip" style="color:var(--sociocultural);border-color:var(--sociocultural);background:rgba(78,205,196,0.08)">Mediasjon</div>
+          <div class="chip" style="color:var(--sociocultural);border-color:var(--sociocultural);background:rgba(78,205,196,0.08)">MKA</div>
+        </div>
+      </div>
+      <div class="content-area">
+        <div class="card" style="border-left:3px solid var(--sociocultural)">
+          <div class="card-title" style="color:var(--sociocultural)">Hvordan skjer læring?</div>
+          <p>Læring er innvevd i sosial interaksjon, språk og kulturelle redskaper. Det viktigste begrepet er <span data-tip="Nærmeste utviklingssone: gapet mellom hva en elev klarer alene og hva de kan oppnå med ekspertveiledning.">nærmeste utviklingssone (NUZ)</span> — rommet mellom hva en elev klarer selvstendig og hva de kan klare med støtte. Lærerens rolle er å gi midlertidig stillasbygging i denne sonen.</p>
+        </div>
+        <div style="position:relative;margin:24px 0;padding:24px;background:var(--surface);border-radius:12px;border:1px solid var(--border);text-align:center">
+          <div style="width:260px;height:260px;border-radius:50%;border:2px dashed rgba(78,205,196,0.3);margin:0 auto;display:flex;align-items:center;justify-content:center;position:relative">
+            <div style="position:absolute;width:100%;top:-30px;font-size:12px;color:var(--sociocultural);font-weight:600;letter-spacing:1px;text-transform:uppercase">Hva eleven kan oppnå med støtte (NUZ)</div>
+            <div style="width:160px;height:160px;border-radius:50%;background:rgba(78,205,196,0.15);border:2px solid var(--sociocultural);display:flex;align-items:center;justify-content:center">
+              <div><div style="font-size:13px;font-weight:600;color:var(--white)">Aktuelt nivå</div><div style="font-size:12px;color:var(--muted)">Hva de klarer alene</div></div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-size:13px;color:var(--muted);font-style:italic">Vygotskys nærmeste utviklingssone</div>
+        </div>
+        <div class="card-title" style="color:var(--muted);margin:24px 0 10px">Sentrale teoretikere</div>
+        <div class="thinker-row">
+          <div class="thinker" style="border-left:3px solid var(--sociocultural)"><h4>Lev Vygotsky</h4><p>Introduserte NUZ og hevdet at språk er det primære tankeredskapet. Læring går foran utvikling.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--sociocultural)"><h4>Lave &amp; Wenger</h4><p>Utviklet begrepene <em>situert læring</em> og <em>praksisfellesskap</em> — læring som deltakelse i et sosialt fellesskap.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--sociocultural)"><h4>James Wertsch</h4><p>Utvidet Vygotskys ideer til å inkludere hvordan kulturelle redskaper (språk, diagrammer, teknologi) medierer tenkning og læring.</p></div>
+        </div>
+        <div class="card-title" style="color:var(--muted);margin:28px 0 10px">Nøkkelbegreper</div>
+        <div class="concept-grid">
+          <div class="concept-pill" onclick="openConcept('nuz')" style="border-left:2px solid var(--sociocultural)"><div class="pill-label" style="color:var(--sociocultural)">NUZ <span class="pill-click-icon">↗</span></div><div class="pill-def">Gapet mellom selvstendig nivå og potensial med veiledning.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('stillasbygging')" style="border-left:2px solid var(--sociocultural)"><div class="pill-label" style="color:var(--sociocultural)">Stillasbygging <span class="pill-click-icon">↗</span></div><div class="pill-def">Midlertidige støttestrukturer som gradvis fjernes etter hvert som kompetansen vokser.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('mediasjon')" style="border-left:2px solid var(--sociocultural)"><div class="pill-label" style="color:var(--sociocultural)">Mediasjon <span class="pill-click-icon">↗</span></div><div class="pill-def">Bruk av redskaper (språk, diagrammer, symboler) for å koble tenkning og læring.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('mka')" style="border-left:2px solid var(--sociocultural)"><div class="pill-label" style="color:var(--sociocultural)">MKA <span class="pill-click-icon">↗</span></div><div class="pill-def">Mer kompetent andre — læreren, medeleven eller ressursen som gir støtte.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('situert-laering')" style="border-left:2px solid var(--sociocultural)"><div class="pill-label" style="color:var(--sociocultural)">Situert læring <span class="pill-click-icon">↗</span></div><div class="pill-def">Kunnskap er innvevd i konteksten der den brukes (Lave &amp; Wenger).</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('praksisfellesskap')" style="border-left:2px solid var(--sociocultural)"><div class="pill-label" style="color:var(--sociocultural)">Praksisfellesskap <span class="pill-click-icon">↗</span></div><div class="pill-def">Læring gjennom deltakelse i et sosialt fellesskap med felles mål.</div><div class="pill-hint">Klikk for eksempler</div></div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-title" style="color:var(--sociocultural)">Praktiske verktøy for klasserommet</div>
+          <div class="tool-row"><div class="tool-icon">🪜</div><div class="tool-info"><h4>Stillasbygging og nedtrapping</h4><p>Start med full støtte (løste eksempler, sjekklister, steg-for-steg-guider), og reduser hjelpen systematisk etter hvert som kompetansen vokser.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">🗣️</div><div class="tool-info"><h4>Tenke-høyt og modellering</h4><p>Sett ord på din egen tankegang mens du demonstrerer: «Nå ser jeg at trykket er for høyt, så jeg justerer fordi...» — språket gjør usynlig ekspertise synlig.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">👥</div><div class="tool-info"><h4>Strukturert samarbeid mellom elever</h4><p>Par en mer erfaren elev med en som er i starten. Forklar tydelig hva hver rolle skal gjøre. Å lære ved å lære bort er svært effektivt.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">💬</div><div class="tool-info"><h4>Rike klasseromssamtaler</h4><p>Stil åpne spørsmål som inviterer til resonnering: «Hvorfor tror du det fungerte?» «Hva ville skjedd hvis du prøvde det annerledes?» Språk er det primære læringsverktøyet.</p></div></div>
+        </div>
+        <div class="two-col">
+          <div class="card" style="border-color:rgba(74,222,128,0.2)"><div class="card-title" style="color:#4ade80">✓ Styrker</div><p>Svært relevant for fagopplæring. Forklarer mentoring, lærlingordning og arbeidsplasslæring. Anerkjenner at profesjonell kompetanse er sosial.</p></div>
+          <div class="card" style="border-color:rgba(248,113,113,0.2)"><div class="card-title" style="color:#f87171">✗ Begrensninger</div><p>Krever veldefinert samarbeid. Uten veiledning kan gruppearbeid bli uproduktivt. NUZ er vanskelig å måle presist.</p></div>
+        </div>
+        <div class="reflection-box">
+          <div class="ref-eyebrow">✏ Refleksjon</div>
+          <h3>Hvor er du den «mer kompetente andre»?</h3>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:14px">Tenk på en ferdighet elevene dine er i ferd med å utvikle. Hva sliter de med? Hvordan bygger du broen mellom der de er og der de skal? Fjerner du støtten gradvis etter hvert som de forbedrer seg?</p>
+          <textarea id="ref-socio" placeholder="Skriv refleksjonen din her…"></textarea><br>
+          <button class="save-note-btn" onclick="saveNote('socio', this)">Lagre notat</button>
+          <div class="saved-msg" id="saved-socio">Lagret ✓</div>
+        </div>
+        <button class="next-btn" onclick="goto('cognitivism')" style="background:var(--cognitivism);color:#0f0d1a">Neste: Kognitivisme <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ═══ KOGNITIVISME ═══ -->
+    <section class="section" id="sec-cognitivism">
+      <div class="hero" style="background:linear-gradient(160deg,#100f1a 0%,#1a1830 50%,#100f1a 100%)">
+        <div class="hero-eyebrow" style="color:var(--cognitivism)">Teori 04 — Kognitivisme</div>
+        <h2>Hjernen som en <em style="color:var(--cognitivism)">informasjonsbehandler</em></h2>
+        <p class="hero-sub">Kognitivismen ser inn i den svarte boksen. Læring handler om hvordan hjernen mottar, bearbeider, lagrer og henter frem informasjon. Å forstå dette hjelper deg å designe undervisning som faktisk setter seg.</p>
+        <div class="theory-chips">
+          <div class="chip" style="color:var(--cognitivism);border-color:var(--cognitivism);background:rgba(155,143,232,0.08)">Arbeidshukommelse</div>
+          <div class="chip" style="color:var(--cognitivism);border-color:var(--cognitivism);background:rgba(155,143,232,0.08)">Langtidshukommelse</div>
+          <div class="chip" style="color:var(--cognitivism);border-color:var(--cognitivism);background:rgba(155,143,232,0.08)">Metakognisjon</div>
+          <div class="chip" style="color:var(--cognitivism);border-color:var(--cognitivism);background:rgba(155,143,232,0.08)">Blooms taksonomi</div>
+        </div>
+      </div>
+      <div class="content-area">
+        <div class="card" style="border-left:3px solid var(--cognitivism)">
+          <div class="card-title" style="color:var(--cognitivism)">Hvordan skjer læring?</div>
+          <p>Ny informasjon kommer inn gjennom sansene til det <span data-tip="Sensorisk register: et kortvarig lager som holder råsensoriske inntrykk i under ett sekund.">sensoriske registeret</span>, deretter til <span data-tip="Arbeidshukommelse: begrenset kapasitet (~7 enheter), holder informasjon mens vi aktivt tenker på den.">arbeidshukommelsen</span> for aktiv bearbeiding. Hvis den kodes godt, overføres den til <span data-tip="Langtidshukommelse: tilnærmet ubegrenset kapasitet, lagrer kunnskap og ferdigheter over tid.">langtidshukommelsen</span>. Kvaliteten på læringen avhenger av hvor dypt informasjonen bearbeides og hvordan den kobles til eksisterende kunnskap.</p>
+        </div>
+        <div class="flow-row" style="margin:20px 0">
+          <div class="flow-box" style="background:rgba(155,143,232,0.1);color:var(--cognitivism);font-size:12px">Sensorisk register<br><small style="opacity:.7;font-weight:400;font-size:11px">Kortvarig, råinndata</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box" style="background:rgba(155,143,232,0.2);color:var(--cognitivism);font-size:12px">Arbeidshukommelse<br><small style="opacity:.7;font-weight:400;font-size:11px">~7 enheter, aktiv tenkning</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box" style="background:rgba(155,143,232,0.3);color:var(--white);font-size:12px">Langtidshukommelse<br><small style="opacity:.7;font-weight:400;font-size:11px">Ubegrenset, permanent</small></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px;font-style:italic">Atkinson &amp; Shiffrins flerlagringsmodell for hukommelse</div>
+        <div class="card-title" style="color:var(--muted);margin:24px 0 10px">Sentrale teoretikere</div>
+        <div class="thinker-row">
+          <div class="thinker" style="border-left:3px solid var(--cognitivism)"><h4>David Ausubel</h4><p>Vektla <em>meningsfull læring</em>: ny kunnskap må kobles til eksisterende kunnskap. Introduserte <em>forhåndsorganisatorer</em> som undervisningsverktøy.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--cognitivism)"><h4>Benjamin Bloom</h4><p>Skapte Blooms taksonomi — et hierarki av kognitive ferdigheter fra å huske til å skape. Brukes over hele verden i undervisningsplanlegging.</p></div>
+          <div class="thinker" style="border-left:3px solid var(--cognitivism)"><h4>John Flavell</h4><p>Introduserte begrepet <em>metakognisjon</em> — å tenke om sin egen tenkning. Elever som overvåker sin egen forståelse lærer mer effektivt.</p></div>
+        </div>
+        <div class="card-title" style="color:var(--muted);margin:28px 0 10px">Nøkkelbegreper</div>
+        <div class="concept-grid">
+          <div class="concept-pill" onclick="openConcept('kognitiv-belastning')" style="border-left:2px solid var(--cognitivism)"><div class="pill-label" style="color:var(--cognitivism)">Kognitiv belastning <span class="pill-click-icon">↗</span></div><div class="pill-def">Arbeidshukommelsen har begrenset kapasitet. Overbelastning blokkerer læring.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('meningsfull-laering')" style="border-left:2px solid var(--cognitivism)"><div class="pill-label" style="color:var(--cognitivism)">Meningsfull læring <span class="pill-click-icon">↗</span></div><div class="pill-def">Ny kunnskap må kobles til det elevene allerede vet (Ausubel).</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('blooms-taksonomi')" style="border-left:2px solid var(--cognitivism)"><div class="pill-label" style="color:var(--cognitivism)">Blooms taksonomi <span class="pill-click-icon">↗</span></div><div class="pill-def">6-nivå-hierarki: Huske → Forstå → Anvende → Analysere → Vurdere → Skape.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('metakognisjon')" style="border-left:2px solid var(--cognitivism)"><div class="pill-label" style="color:var(--cognitivism)">Metakognisjon <span class="pill-click-icon">↗</span></div><div class="pill-def">Bevissthet om og regulering av egne tenke- og læringsprosesser.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('forhandsorganisator')" style="border-left:2px solid var(--cognitivism)"><div class="pill-label" style="color:var(--cognitivism)">Forhåndsorganisator <span class="pill-click-icon">↗</span></div><div class="pill-def">En oversikt eller ramme gitt før undervisning for å koble ny kunnskap til eksisterende.</div><div class="pill-hint">Klikk for eksempler</div></div>
+          <div class="concept-pill" onclick="openConcept('spredt-repetisjon')" style="border-left:2px solid var(--cognitivism)"><div class="pill-label" style="color:var(--cognitivism)">Spredt repetisjon <span class="pill-click-icon">↗</span></div><div class="pill-def">Å gjenbesøke stoff med økende tidsintervaller bedrer langtidshukommelsen.</div><div class="pill-hint">Klikk for eksempler</div></div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="card-title" style="color:var(--cognitivism)">Blooms taksonomi i praksis</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Bruk dette når du planlegger læringsmål. Flytt elevene fra lavere til høyere kognitive nivåer over tid.</p>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="padding:8px 16px;border-radius:6px;font-size:13px;background:rgba(155,143,232,0.4);color:var(--white)"><strong>Skape</strong> — Designe, produsere, konstruere, komponere</div>
+            <div style="padding:8px 16px;border-radius:6px;font-size:13px;background:rgba(155,143,232,0.32);color:var(--white)"><strong>Vurdere</strong> — Bedømme, kritisere, rettferdiggjøre, vurdere</div>
+            <div style="padding:8px 16px;border-radius:6px;font-size:13px;background:rgba(155,143,232,0.25);color:var(--text)"><strong>Analysere</strong> — Sammenligne, differensiere, organisere, undersøke</div>
+            <div style="padding:8px 16px;border-radius:6px;font-size:13px;background:rgba(155,143,232,0.18);color:var(--text)"><strong>Anvende</strong> — Bruke, gjennomføre, løse, demonstrere</div>
+            <div style="padding:8px 16px;border-radius:6px;font-size:13px;background:rgba(155,143,232,0.12);color:var(--muted)"><strong>Forstå</strong> — Forklare, oppsummere, tolke, omformulere</div>
+            <div style="padding:8px 16px;border-radius:6px;font-size:13px;background:rgba(155,143,232,0.06);color:var(--muted)"><strong>Huske</strong> — Gjenkalle, liste opp, gjenkjenne, navngi</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-title" style="color:var(--cognitivism)">Praktiske verktøy for klasserommet</div>
+          <div class="tool-row"><div class="tool-icon">🗺️</div><div class="tool-info"><h4>Begrepskart</h4><p>La elevene kartlegge sammenhengene mellom nøkkelbegreper visuelt. Det tvinger dem til å strukturere og koble kunnskap — og flytte den dypere inn i langtidshukommelsen.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">📌</div><div class="tool-info"><h4>Forhåndsorganisatorer</h4><p>Vis en visuell oversikt eller disposisjon over hva som kommer, før du begynner på et nytt tema. Det gir elevene kognitive «kroker» å henge ny informasjon på.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">🔄</div><div class="tool-info"><h4>Spredt repetisjon</h4><p>Gjenbesøk nøkkelstoff etter 1 dag, 1 uke og 1 måned. Korte hentepraksis-øvelser (quiz, spørsmål) er langt mer effektivt enn å lese igjen.</p></div></div>
+          <div class="tool-row"><div class="tool-icon">🧭</div><div class="tool-info"><h4>Lær elevene metakognitive strategier</h4><p>Hjelp elevene med å overvåke sin egen forståelse: «Forstår jeg dette egentlig, eller gjenkjenner jeg det bare?» Lær dem å selvteste, ikke bare lese om igjen.</p></div></div>
+        </div>
+        <div class="two-col">
+          <div class="card" style="border-color:rgba(74,222,128,0.2)"><div class="card-title" style="color:#4ade80">✓ Styrker</div><p>Gir evidensbaserte undervisningsstrategier (spredt øving, hentepraksis, redusert kognitiv belastning). Svært praktisk for undervisningsdesign.</p></div>
+          <div class="card" style="border-color:rgba(248,113,113,0.2)"><div class="card-title" style="color:#f87171">✗ Begrensninger</div><p>Kan bli for teknisk. Tar ikke fullt ut hensyn til emosjonelle, sosiale eller kulturelle faktorer i læring.</p></div>
+        </div>
+        <div class="reflection-box">
+          <div class="ref-eyebrow">✏ Refleksjon</div>
+          <h3>Er elevene dine overbelastet?</h3>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:14px">Tenk på en kompleks undervisningstime. Hvor mye ny informasjon introduserer du på én gang? Har elevene det kognitive stillaset som trengs? Hvordan kunne du brukt forhåndsorganisatorer eller oppdeling for å redusere kognitiv belastning?</p>
+          <textarea id="ref-cogn" placeholder="Skriv refleksjonen din her…"></textarea><br>
+          <button class="save-note-btn" onclick="saveNote('cogn', this)">Lagre notat</button>
+          <div class="saved-msg" id="saved-cogn">Lagret ✓</div>
+        </div>
+        <button class="next-btn" onclick="goto('compare')" style="background:var(--gold);color:#1a1000">Neste: Sammenlign &amp; anvend <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ═══ SAMMENLIGNING ═══ -->
+    <section class="section" id="sec-compare">
+      <div class="hero" style="background:linear-gradient(160deg,#12100a 0%,#201b0c 50%,#12100a 100%)">
+        <div class="hero-eyebrow" style="color:var(--gold)">Anvend &amp; sammenlign</div>
+        <h2>Alle fire teorier — <em style="color:var(--gold)">side om side</em></h2>
+        <p class="hero-sub">Ingen enkelt teori forklarer læring fullt ut. Dyktige lærere bruker alle fire — og velger riktig tilnærming i rett øyeblikk. Her er hvordan du ser forskjellene tydelig, og hvordan du anvender dem.</p>
+      </div>
+      <div class="content-area">
+        <div class="card" style="padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch">
+          <table class="compare-table">
+            <thead><tr>
+              <th class="th-label" style="width:160px"></th>
+              <th style="color:var(--behaviorism)">Behaviorisme</th>
+              <th style="color:var(--constructivism)">Konstruktivisme</th>
+              <th style="color:var(--sociocultural)">Sosiokulturell</th>
+              <th style="color:var(--cognitivism)">Kognitivisme</th>
+            </tr></thead>
+            <tbody>
+              <tr><td class="td-label">Syn på læring</td><td>Atferdsendring</td><td>Aktiv kunnskapsbygging</td><td>Sosialt og kulturelt fellesskap</td><td>Informasjonsbearbeiding</td></tr>
+              <tr><td class="td-label">Læreren er…</td><td>Instruktør og forsterkeren</td><td>Fasilitator og guide</td><td>Stillasbygger og MKA</td><td>Forklarer og designer</td></tr>
+              <tr><td class="td-label">Eleven er…</td><td>Passiv mottaker</td><td>Aktiv konstruktør</td><td>Sosial deltaker</td><td>Aktiv informasjonsbehandler</td></tr>
+              <tr><td class="td-label">Nøkkelverktøy</td><td>Forsterkning, drill</td><td>Prosjekter, utforskning</td><td>Dialog, samarbeid</td><td>Begrepskart, Blooms taksonomi</td></tr>
+              <tr><td class="td-label">Best egnet for</td><td>Sikkerhetsrutiner, prosedyrer</td><td>Problemløsning, kreativitet</td><td>Mentoring, teamarbeid</td><td>Strukturert kunnskapsoverføring</td></tr>
+              <tr><td class="td-label">Svakhet</td><td>Ignorerer det indre livet</td><td>Kan mangle struktur</td><td>Krever velstrukturerte grupper</td><td>Overser sosiale/emosjonelle faktorer</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:36px"><div class="card-title" style="color:var(--gold);margin-bottom:6px">Klasseromsscenarioer</div><p style="font-size:14px;color:var(--muted);margin-bottom:20px">Les hvert scenario. Tenk gjennom hvilken teori som best forklarer situasjonen. Avslør deretter analysen.</p></div>
+        <div class="scenario-card">
+          <div class="sc-tag" style="background:rgba(224,92,92,0.15);color:var(--behaviorism)">Scenario 1</div>
+          <h4>Eleven som alltid glemmer vernebriller</h4>
+          <p>Du har en elev i verkstedet som gang på gang glemmer å ta på vernebriller. Du har påmint ham mange ganger. Hvilken teori veileder ditt neste trekk?</p>
+          <button class="sc-toggle" onclick="toggleReveal(this)">Vis analyse ↓</button>
+          <div class="sc-reveal" style="color:#fca5a5;background:rgba(224,92,92,0.07);border-color:var(--behaviorism)"><strong>Behavioristisk tilnærming:</strong> Atferden (å glemme brillene) har ikke konsekvent blitt fulgt av en ubehagelig konsekvens. Innfør en tydelig og konsekvent regel med umiddelbare konsekvenser hver eneste gang. Vurder også positiv forsterkning: når han tar på brillene uten påminnelse, anerkjenn det spesifikt. Konsekvens er alt i operant betinging.</div>
+        </div>
+        <div class="scenario-card">
+          <div class="sc-tag" style="background:rgba(244,162,97,0.15);color:var(--constructivism)">Scenario 2</div>
+          <h4>Elever som følger steg, men ikke kan problemløse</h4>
+          <p>Elevene dine kan følge en manual perfekt, men fryser når noe går galt. De har pugget prosessen, men forstår ikke hvorfor den fungerer.</p>
+          <button class="sc-toggle" onclick="toggleReveal(this)">Vis analyse ↓</button>
+          <div class="sc-reveal" style="color:#fcd9b0;background:rgba(244,162,97,0.07);border-color:var(--constructivism)"><strong>Konstruktivistisk respons:</strong> De er opplært, ikke utdannet. De har assimilert steg uten å bygge ekte skjemaer. Prøv å bevisst bryte prosedyren og be elevene diagnostisere hva som gikk galt. La dem streve produktivt før du forklarer. Introduser oppgaver uten ett enkelt riktig svar. Jobben deres er å bygge forståelse, ikke reprodusere steg.</div>
+        </div>
+        <div class="scenario-card">
+          <div class="sc-tag" style="background:rgba(78,205,196,0.15);color:var(--sociocultural)">Scenario 3</div>
+          <h4>Den stille eleven som lærer ved å observere</h4>
+          <p>En av elevene dine snakker sjelden i timen, men du merker at hun presterer utmerket når hun jobber side om side med erfarne medelever. Hun sliter alene.</p>
+          <button class="sc-toggle" onclick="toggleReveal(this)">Vis analyse ↓</button>
+          <div class="sc-reveal" style="color:#a5eeea;background:rgba(78,205,196,0.07);border-color:var(--sociocultural)"><strong>Sosiokulturell tolkning:</strong> Hun lærer innenfor NUZ — hun klarer ting med støtte som hun ennå ikke klarer alene. Dette er ikke en svakhet; det er nøyaktig der læring skjer. Strukturer mer samarbeid for henne, sikre at paret er støttende og ikke dominerende, og gi henne gradvis mer selvstendige oppgaver. Følg med på om gapet snevres inn over tid.</div>
+        </div>
+        <div class="scenario-card">
+          <div class="sc-tag" style="background:rgba(155,143,232,0.15);color:var(--cognitivism)">Scenario 4</div>
+          <h4>Elever som virker som de forstår, men stryker på prøven</h4>
+          <p>I timen virker alt greit — elevene nikker og svarer riktig. Men prøveresultatene er dårlige. Hva skjer?</p>
+          <button class="sc-toggle" onclick="toggleReveal(this)">Vis analyse ↓</button>
+          <div class="sc-reveal" style="color:#c4b8ff;background:rgba(155,143,232,0.07);border-color:var(--cognitivism)"><strong>Kognitivistisk diagnose:</strong> Elevene gjenkjenner sannsynligvis informasjon i stedet for å hente den frem — en klassisk illusjon om forståelse. De har vært passive (lest om igjen, lyttet) i stedet for aktivt hentet frem (selvtestet, forklart fra hukommelsen). Bytt til hyppige, lavrisiko hentepraksis-øvelser. Bruk ut-av-timen-spørsmål og mini-quiz-er, og be elevene forklare begreper med notatene lukket.</div>
+        </div>
+        <button class="next-btn" onclick="goto('quiz')" style="background:#7dd3fc;color:#0a1520">Ta kunnskapssjekken <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </section>
+
+    <!-- ═══ QUIZ ═══ -->
+    <section class="section" id="sec-quiz">
+      <div class="hero" style="background:linear-gradient(160deg,#080f18 0%,#0d1825 50%,#080f18 100%)">
+        <div class="hero-eyebrow" style="color:#7dd3fc">Kunnskapssjekk</div>
+        <h2>Test din <em style="color:#7dd3fc">forståelse</em></h2>
+        <p class="hero-sub">8 spørsmål fra alle fire teoriene. Velg svaret ditt, og sjekk det. Det er ingen press — dette handler om refleksjon, ikke karakter.</p>
+      </div>
+      <div class="content-area"><div class="quiz-wrapper">
+        <div class="quiz-q" id="q1"><div class="q-num">Spørsmål 1 / 8</div><div class="q-text">Hvilken psykolog utviklet begrepet operant betinging, og viste at atferd formes av konsekvensene?</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q1',false)"><div class="opt-circle">A</div>Ivan Pavlov</div><div class="quiz-option" onclick="selectOpt(this,'q1',true)"><div class="opt-circle">B</div>B.F. Skinner</div><div class="quiz-option" onclick="selectOpt(this,'q1',false)"><div class="opt-circle">C</div>Jean Piaget</div><div class="quiz-option" onclick="selectOpt(this,'q1',false)"><div class="opt-circle">D</div>Lev Vygotsky</div></div><button class="check-btn" onclick="checkQ('q1', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q1"></div></div>
+        <div class="quiz-q" id="q2"><div class="q-num">Spørsmål 2 / 8</div><div class="q-text">En elev endrer sin eksisterende forståelse av hvordan en motor virker etter å ha sett et nytt drivstoffsystem. I Piagets terminologi kalles dette…</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q2',false)"><div class="opt-circle">A</div>Assimilasjon</div><div class="quiz-option" onclick="selectOpt(this,'q2',true)"><div class="opt-circle">B</div>Akkomodasjon</div><div class="quiz-option" onclick="selectOpt(this,'q2',false)"><div class="opt-circle">C</div>Ekvilibrasjon</div><div class="quiz-option" onclick="selectOpt(this,'q2',false)"><div class="opt-circle">D</div>Stillasbygging</div></div><button class="check-btn" onclick="checkQ('q2', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q2"></div></div>
+        <div class="quiz-q" id="q3"><div class="q-num">Spørsmål 3 / 8</div><div class="q-text">Vygotskys nærmeste utviklingssone (NUZ) beskriver…</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q3',false)"><div class="opt-circle">A</div>Området i hjernen som er ansvarlig for språklæring</div><div class="quiz-option" onclick="selectOpt(this,'q3',false)"><div class="opt-circle">B</div>Forskjellen mellom en elevs intelligens og prestasjon</div><div class="quiz-option" onclick="selectOpt(this,'q3',true)"><div class="opt-circle">C</div>Gapet mellom hva en elev klarer selvstendig og hva de klarer med veiledning</div><div class="quiz-option" onclick="selectOpt(this,'q3',false)"><div class="opt-circle">D</div>Det optimale fysiske læringsmiljøet</div></div><button class="check-btn" onclick="checkQ('q3', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q3"></div></div>
+        <div class="quiz-q" id="q4"><div class="q-num">Spørsmål 4 / 8</div><div class="q-text">Blooms taksonomi brukes primært til…</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q4',false)"><div class="opt-circle">A</div>Å klassifisere typer elevmotivasjon</div><div class="quiz-option" onclick="selectOpt(this,'q4',true)"><div class="opt-circle">B</div>Å planlegge læringsmål på ulike kognitive nivåer</div><div class="quiz-option" onclick="selectOpt(this,'q4',false)"><div class="opt-circle">C</div>Å måle atferdsmønstre i klasserommet</div><div class="quiz-option" onclick="selectOpt(this,'q4',false)"><div class="opt-circle">D</div>Å organisere elevgrupper basert på evner</div></div><button class="check-btn" onclick="checkQ('q4', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q4"></div></div>
+        <div class="quiz-q" id="q5"><div class="q-num">Spørsmål 5 / 8</div><div class="q-text">Du vil at elevene skal utvikle sikkerhetsrutiner som blir automatiske i verkstedet. Hvilken teoretisk tilnærming er mest direkte relevant?</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q5',true)"><div class="opt-circle">A</div>Behaviorisme — konsekvent forsterkning bygger automatiske responser</div><div class="quiz-option" onclick="selectOpt(this,'q5',false)"><div class="opt-circle">B</div>Konstruktivisme — elevene bør oppdage sikkerhetsregler selv</div><div class="quiz-option" onclick="selectOpt(this,'q5',false)"><div class="opt-circle">C</div>Sosiokulturell teori — gruppediskusjon utvikler sikkerhetsbevissthet</div><div class="quiz-option" onclick="selectOpt(this,'q5',false)"><div class="opt-circle">D</div>Kognitivisme — forhåndsorganisatorer hjelper elever å huske sikkerhet</div></div><button class="check-btn" onclick="checkQ('q5', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q5"></div></div>
+        <div class="quiz-q" id="q6"><div class="q-num">Spørsmål 6 / 8</div><div class="q-text">Stillasbygging (i Vygotskys forstand) betyr…</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q6',false)"><div class="opt-circle">A</div>Gi elever en permanent støttestruktur slik at de alltid lykkes</div><div class="quiz-option" onclick="selectOpt(this,'q6',false)"><div class="opt-circle">B</div>Dele innholdet i svært små steg som er lette å memorere</div><div class="quiz-option" onclick="selectOpt(this,'q6',true)"><div class="opt-circle">C</div>Gi midlertidig støtte som gradvis fjernes etter hvert som kompetansen vokser</div><div class="quiz-option" onclick="selectOpt(this,'q6',false)"><div class="opt-circle">D</div>Bruke fysiske modeller i klasserommet for å illustrere abstrakte begreper</div></div><button class="check-btn" onclick="checkQ('q6', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q6"></div></div>
+        <div class="quiz-q" id="q7"><div class="q-num">Spørsmål 7 / 8</div><div class="q-text">Metakognisjon refererer til…</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q7',false)"><div class="opt-circle">A</div>En elevs evne til å memorere store mengder informasjon</div><div class="quiz-option" onclick="selectOpt(this,'q7',true)"><div class="opt-circle">B</div>Bevissthet om og overvåking av egne tenke- og læringsprosesser</div><div class="quiz-option" onclick="selectOpt(this,'q7',false)"><div class="opt-circle">C</div>Hastigheten informasjon beveger seg fra arbeidshukommelse til langtidshukommelse</div><div class="quiz-option" onclick="selectOpt(this,'q7',false)"><div class="opt-circle">D</div>Bruk av sosiale medier i læringskontekst</div></div><button class="check-btn" onclick="checkQ('q7', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q7"></div></div>
+        <div class="quiz-q" id="q8"><div class="q-num">Spørsmål 8 / 8</div><div class="q-text">En fagskolelærer begynner en time om hydraulikk med å vise et diagram som kobler dagens innhold til begreper elevene kjenner fra forrige modul. Denne teknikken kalles…</div><div class="quiz-options"><div class="quiz-option" onclick="selectOpt(this,'q8',false)"><div class="opt-circle">A</div>Atferdskontrakt</div><div class="quiz-option" onclick="selectOpt(this,'q8',false)"><div class="opt-circle">B</div>Praksisfellesskap</div><div class="quiz-option" onclick="selectOpt(this,'q8',true)"><div class="opt-circle">C</div>Forhåndsorganisator</div><div class="quiz-option" onclick="selectOpt(this,'q8',false)"><div class="opt-circle">D</div>Spiralpensum</div></div><button class="check-btn" onclick="checkQ('q8', this)">Sjekk svar</button><div class="quiz-feedback" id="fb-q8"></div></div>
+        <div class="quiz-score-box" id="quiz-score"><div class="score-big" id="score-display">–/8</div><div class="score-sub" id="score-msg">Fullfør alle spørsmål for å se poengsummen din.</div><button class="start-btn" onclick="goto('summary')" style="margin-top:24px">Se mine notater &amp; oppsummering <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      </div></div>
+    </section>
+
+    <!-- ═══ OPPSUMMERING ═══ -->
+    <section class="section" id="sec-summary">
+      <div class="hero" style="background:linear-gradient(160deg,#0f1623 0%,#1a2744 50%,#0f1623 100%)">
+        <div class="hero-eyebrow" style="color:var(--gold)">Mine notater &amp; oppsummering</div>
+        <h2>Din <em style="color:var(--gold)">læringsreise</em> så langt</h2>
+        <p class="hero-sub">Alle refleksjonene dine — lagret på tvers av økter. Notatene dine ligger i denne nettleseren og er her neste gang du åpner siden.</p>
+      </div>
+      <div class="content-area">
+        <div id="storage-banner" style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.2);border-radius:10px;margin-bottom:24px;font-size:13px;color:var(--muted)">
+          <span style="font-size:16px">💾</span>
+          <span id="storage-status">Notater lagres i nettleseren din — de er her neste gang du åpner denne siden.</span>
+          <button onclick="clearAllData()" style="margin-left:auto;padding:5px 12px;border-radius:6px;border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.08);color:#f87171;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Slett alle data</button>
+        </div>
+        <div class="notes-summary" id="ns-behav">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="theory-color" style="color:var(--behaviorism);margin-bottom:0">Behaviorisme</div><span class="note-ts" id="ts-behav" style="font-size:11px;color:var(--muted)"></span></div>
+          <h3>Refleksjon om behaviorisme</h3>
+          <div id="note-behav-display" class="no-note">Ingen notat lagret ennå.</div>
+          <div id="note-behav-history" class="note-history"></div>
+        </div>
+        <div class="notes-summary" id="ns-const">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="theory-color" style="color:var(--constructivism);margin-bottom:0">Konstruktivisme</div><span class="note-ts" id="ts-const" style="font-size:11px;color:var(--muted)"></span></div>
+          <h3>Refleksjon om konstruktivisme</h3>
+          <div id="note-const-display" class="no-note">Ingen notat lagret ennå.</div>
+          <div id="note-const-history" class="note-history"></div>
+        </div>
+        <div class="notes-summary" id="ns-socio">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="theory-color" style="color:var(--sociocultural);margin-bottom:0">Sosiokulturell teori</div><span class="note-ts" id="ts-socio" style="font-size:11px;color:var(--muted)"></span></div>
+          <h3>Refleksjon om sosiokulturell teori</h3>
+          <div id="note-socio-display" class="no-note">Ingen notat lagret ennå.</div>
+          <div id="note-socio-history" class="note-history"></div>
+        </div>
+        <div class="notes-summary" id="ns-cogn">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="theory-color" style="color:var(--cognitivism);margin-bottom:0">Kognitivisme</div><span class="note-ts" id="ts-cogn" style="font-size:11px;color:var(--muted)"></span></div>
+          <h3>Refleksjon om kognitivisme</h3>
+          <div id="note-cogn-display" class="no-note">Ingen notat lagret ennå.</div>
+          <div id="note-cogn-history" class="note-history"></div>
+        </div>
+        <div class="reflection-box" style="margin-top:32px">
+          <div class="ref-eyebrow">✏ Avsluttende refleksjon</div>
+          <h3>Hvilken teori vil du bruke først — og hvordan?</h3>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:14px">Basert på alt du har lest og reflektert over: velg én konkret endring du vil gjøre i undervisningen din neste uke. Vær spesifikk.</p>
+          <div id="note-final-display" class="no-note" style="margin-bottom:12px">Ingen notat lagret ennå.</div>
+          <div id="note-final-history" class="note-history" style="margin-bottom:14px"></div>
+          <textarea id="ref-final" placeholder="F.eks.: Jeg vil starte neste time med en forhåndsorganisator. Jeg vil bruke stillasbygging i hydraulikktimen ved å gi full sjekkliste dag 1, og fjerne ett steg per uke…"></textarea><br>
+          <button class="save-note-btn" onclick="saveNote('final', this)">Lagre notat</button>
+          <div class="saved-msg" id="saved-final">Lagret ✓</div>
+        </div>
+        <div id="completion-box" style="background:linear-gradient(135deg,rgba(78,205,196,0.12),rgba(155,143,232,0.08));border:1px solid rgba(78,205,196,0.2);border-radius:16px;padding:40px;text-align:center;margin-top:28px">
+          <div style="font-size:48px;margin-bottom:16px">🎓</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--white);margin-bottom:10px">Du har fullført guiden.</div>
+          <p style="font-size:15px;color:var(--muted);max-width:480px;margin:0 auto;line-height:1.7">Ingen enkelt teori gir hele svaret — de beste lærerne bruker alle fire som linser. Hold disse ideene nær deg når du planlegger, og gjenbesøk dem etter hvert som praksisen din utvikler seg.</p>
+        </div>
+      </div>
+    </section>
+
+  <!-- Bunnnavigasjon -->
+  <nav class="bottom-nav">
+    <button class="bnav-item active" onclick="goto('intro')" id="bnav-intro"><span class="bnav-icon">🏠</span><span class="bnav-label">Hjem</span></button>
+    <button class="bnav-item" onclick="goto('behaviorism')" id="bnav-behaviorism"><span class="bnav-icon">🧠</span><span class="bnav-label">Beh.</span></button>
+    <button class="bnav-item" onclick="goto('constructivism')" id="bnav-constructivism"><span class="bnav-icon">🔨</span><span class="bnav-label">Kon.</span></button>
+    <button class="bnav-item" onclick="goto('sociocultural')" id="bnav-sociocultural"><span class="bnav-icon">🤝</span><span class="bnav-label">Soc.</span></button>
+    <button class="bnav-item" onclick="goto('cognitivism')" id="bnav-cognitivism"><span class="bnav-icon">⚙️</span><span class="bnav-label">Kog.</span></button>
+    <button class="bnav-item" onclick="goto('compare')" id="bnav-compare"><span class="bnav-icon">📊</span><span class="bnav-label">Samm.</span></button>
+    <button class="bnav-item" onclick="goto('quiz')" id="bnav-quiz"><span class="bnav-icon">✅</span><span class="bnav-label">Quiz</span></button>
+    <button class="bnav-item" onclick="goto('summary')" id="bnav-summary"><span class="bnav-icon">📝</span><span class="bnav-label">Notater</span></button>
+  </nav>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="concept-modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-tag" id="modal-tag"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-def" id="modal-def"></div>
+    <div class="modal-example-label">Eksempler fra klasserommet</div>
+    <div id="modal-examples"></div>
+  </div>
+</div>
+
+<script>
+  // ── localStorage ──
+  const LS_KEY = 'lt_no_data_v1';
+  function loadStorage() { try { const r = localStorage.getItem(LS_KEY); return r ? JSON.parse(r) : {}; } catch(e) { return {}; } }
+  function saveStorage(d) { try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch(e) {} }
+  let _store = loadStorage();
+  const notes = _store.notes || {};
+  const visited = new Set(_store.visited || ['intro']);
+  const quizAnswers = _store.quizAnswers || {};
+  let quizScore = _store.quizScore || 0;
+  const SESSION_ID = (() => { if (_store.currentSession) return _store.currentSession; const id = Date.now(); _store.currentSession = id; saveStorage(_store); return id; })();
+  function persist() { _store.notes = notes; _store.visited = Array.from(visited); _store.quizAnswers = quizAnswers; _store.quizScore = quizScore; _store.currentSession = SESSION_ID; saveStorage(_store); }
+  function fmtDate(ts) { const d = new Date(ts); return d.toLocaleDateString('nb-NO', {day:'numeric',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('nb-NO', {hour:'2-digit',minute:'2-digit'}); }
+  function isNewSession(ts) { return ts >= SESSION_ID; }
+
+  // ── Begrepdata ──
+  const CONCEPTS = {
+    'klassisk-betinging': { theory:'Behaviorisme', color:'#e05c5c', title:'Klassisk betinging', def:'Læring gjennom gjentatt sammenkobling mellom en nøytral stimulus og en som naturlig utløser en respons. Over tid utløser den nøytrale stimulusen alene responsen.', examples:[{icon:'🔔',scenario:'Oppstartsrutine i verkstedet',text:'Hver time begynner du med å si «Verktøy frem, briller på» i samme tone. Etter noen uker tar elevene automatisk på brillene i det de hører stemmen din — før du er ferdig med setningen.'},{icon:'🏫',scenario:'Klasseromsstemning',text:'Du spiller jevnlig rolig bakgrunnsmusikk under konsentrert arbeid. Elevene begynner gradvis å assosiere den musikken med konsentrasjon — den blir et signal for «nå er det arbeidstid».'}]},
+    'operant-betinging': { theory:'Behaviorisme', color:'#e05c5c', title:'Operant betinging', def:'Atferd formes av konsekvensene. Handlinger fulgt av positive utfall blir hyppigere; handlinger fulgt av negative utfall blir sjeldnere.', examples:[{icon:'✅',scenario:'Ros for korrekt sveising',text:'En elev lager en ren sveisepøl. Du sier umiddelbart: «Den vinkelen og den hastigheten var nøyaktig riktig — det er akkurat slik et profesjonelt sveisesøm ser ut.» Den spesifikke rosen gjør det sannsynlig at hun gjentar teknikken.'},{icon:'📝',scenario:'Konsekvenser for sen innlevering',text:'En elev leverer jevnlig arbeid for sent. Du bruker en konsekvent, mild konsekvens hver gang. Den forutsigbare konsekvensen reduserer gradvis atferden — ikke på grunn av sinne, men fordi konsekvensene er forutsigbare.'}]},
+    'positiv-forsterkning': { theory:'Behaviorisme', color:'#e05c5c', title:'Positiv forsterkning', def:'Tilføre noe ønskelig etter en atferd for å øke sannsynligheten for at den gjentas. «Belønningen» må følge atferden umiddelbart for å være effektiv.', examples:[{icon:'🎯',scenario:'Verbal anerkjennelse i klassen',text:'En elev som sjelden bidrar, gir et godt svar. Du responderer: «Det er en skarp observasjon — skriv det ned alle!» Den offentlige anerkjennelsen forsterker deltakelsen uten å virke konstruert.'},{icon:'🏆',scenario:'Fremdriftskart',text:'I et praktisk ferdighetsmodul krysser elevene av kompetanser etter hvert som de mestrer dem. Den visuelle fremgangen blir i seg selv belønning — elever begynner å be om å demonstrere ferdigheter for å «hake av».'}]},
+    'negativ-forsterkning': { theory:'Behaviorisme', color:'#e05c5c', title:'Negativ forsterkning', def:'Fjerne en ubehagelig stimulus når ønsket atferd oppstår, slik at atferden blir mer sannsynlig. Dette er IKKE straff — det øker atferd ved å fjerne noe aversivt.', examples:[{icon:'📋',scenario:'Fjerne sjekklisten',text:'Elever må fullføre en detaljert sikkerhetssjekkliste før hver oppgave. Når en elev demonstrerer konsekvent sikker praksis over tre uker, sier du at de ikke lenger trenger sjekklisten. Fjerningen av det kjedelige skjemaet forsterker den sikre atferden.'},{icon:'⏰',scenario:'Forkortet øvingstid',text:'Elever som møter presis og setter opp riktig kan hoppe over den langsomme gruppeoppvarmingen. Å møte forberedt fjerner «kjedelig» starter — noe som forsterker punktlighet og beredskap.'}]},
+    'slukking': { theory:'Behaviorisme', color:'#e05c5c', title:'Slukking', def:'En tidligere forsterket atferd forsvinner gradvis når forsterkning konsekvent uteblir. Krever tålmodighet — atferden kan kortsiktig intensiveres før den avtar.', examples:[{icon:'🙋',scenario:'Roping av svar uten å rekke opp hånden',text:'En elev roper alltid svar uten å rekke opp hånden, delvis fordi du av og til svarer likevel. Når du forplikter deg til kun å svare på opprekkte hender — hver eneste gang — slukker ropingen sakte i løpet av 1–2 uker.'},{icon:'📱',scenario:'Telefonsjekking',text:'En elev sjekker telefonen hyppig. Tidligere slapp de unna. Når du konsekvent og rolig omdirigerer uten sinne eller drama hver gang det skjer, mister atferden sin payoff og avtar.'}]},
+    'forming': { theory:'Behaviorisme', color:'#e05c5c', title:'Forming (shaping)', def:'Forsterke små stegvise tilnærminger mot ønsket sluttresultat. Du venter ikke på perfekt prestasjon — du belønner fremskritt mot den.', examples:[{icon:'🔧',scenario:'Lære å bruke dreiebenk',text:'Uke 1: du roser elever bare for korrekt holdning og hånddplassering. Uke 2: du forsterker jevn matehastighet. Uke 3: du gir tilbakemelding på overflatebehandling. Hvert steg bygger på det forrige — den komplekse ferdigheten bygges ett forsterket komponent om gangen.'},{icon:'🗣️',scenario:'Muntlige presentasjoner',text:'En sjenert elev sliter med å snakke foran klassen. Først forsterker du dem bare for å reise seg. Deretter for å snakke i 30 sekunder. Deretter for å ta øyekontakt. Gradvis blir fulle, trygge presentasjoner mulige gjennom forsterkede steg.'}]},
+    'skjema': { theory:'Konstruktivisme', color:'#f4a261', title:'Skjema', def:'Et mentalt rammeverk eller organisert kunnskapsstruktur som hjelper oss å tolke og organisere ny informasjon. Vi bærer alle tusenvis av skjemaer — for gjenstander, situasjoner, prosedyrer og begreper.', examples:[{icon:'🔌',scenario:'Elektrisk krets-skjema',text:'En elev som har koblet en enkel lysbryter har allerede et grunnleggende «krets»-skjema. Når du introduserer trefasekabling, prøver de umiddelbart å passe det inn i sitt eksisterende skjema — og gjør forutsigbare feil før skjemaet oppdateres.'},{icon:'🚗',scenario:'Sikkerhetsbevissthet i verkstedet',text:'Elever som kommer til klassen din har allerede et skjema for «fare» fra dagliglivet. Du kan utnytte dette: «Trykket i den hydraulikkledningen er som en brannslange på full styrke — hva gjør du nær en brannslange?» Deres eksisterende skjema gjør halve jobben.'}]},
+    'assimilasjon': { theory:'Konstruktivisme', color:'#f4a261', title:'Assimilasjon', def:'Inkorporere ny informasjon i et eksisterende skjema uten å endre skjemaet. Det nye passer greit med det vi allerede vet.', examples:[{icon:'⚙️',scenario:'Nytt verktøy, kjent prinsipp',text:'En elev som kan bruke en håndboremaskinn møter for første gang en søyleboremaskinn. Betjeningen er forskjellig, men kjerneprinsippet (roterende bor, trykk, bore gjennom materiale) assimileres lett inn i det eksisterende boremaskinn-skjemaet.'},{icon:'📐',scenario:'Nytt materiale, samme prosess',text:'Elever som kan lese et teknisk tegning av en stålkomponent, assimilerer enkelt lesingen av en aluminiumskomponent — skjemaet for «lese tekniske tegninger» absorberer bare den nye materialinformasjonen.'}]},
+    'akkomodasjon': { theory:'Konstruktivisme', color:'#f4a261', title:'Akkomodasjon', def:'Omstrukturere eller erstatte et eksisterende skjema for å romme ny informasjon som ikke passer. Her skjer ekte kognitiv utvikling — og det kjennes ubehagelig.', examples:[{icon:'⚡',scenario:'AC vs. DC-misforståelse',text:'Elever tror ofte at elektrisitet «flyter som vann i et rør» — noe som fungerer for DC. Når de møter AC (vekselstrøm), bryter dette skjemaet fullstendig sammen. De må bygge et nytt, mer komplekst skjema. Forvent motstand og forvirring — det er akkomodasjon som skjer.'},{icon:'🌡️',scenario:'Temperatur ≠ varme',text:'Elever tenker intuitivt at temperatur og varme betyr det samme. Et veldesignet forsøk der to materialer ved samme temperatur kjennes forskjellige ut, tvinger akkomodasjon: «temperatur = varme»-skjemaet må ombygges til separate begreper.'}]},
+    'ekvilibrasjon': { theory:'Konstruktivisme', color:'#f4a261', title:'Ekvilibrasjon', def:'Den pågående drivkraften mot kognitiv balanse mellom det vi vet og det vi erfarer. Ulikevekt (forvirring) motiverer læring; likevekt (forståelse) er løsningen.', examples:[{icon:'🤔',scenario:'Produktiv forvirring',text:'Før du forklarer hvordan en trykkavlastningsventil fungerer, viser du elevene et rør som uventet sprekker i en simulering. Forvirringen («Hvorfor skjedde det?») er ulikevekt. Drivkraften til å løse det er ekvilibrasjon — og det gjør forklaringen din mye mer minneverdig.'},{icon:'🧩',scenario:'«Aha!»-øyeblikket',text:'En elev sliter i dager med å forstå hvorfor kretsen setter ut. Når de endelig sporer feilen, er letelsen og forståelsen de kjenner på, ekvilibrium som gjenopprettes. Det øyeblikket av løsning er langt mer minneverdig enn noen forklaring du kunne ha gitt.'}]},
+    'oppdagelseslaering': { theory:'Konstruktivisme', color:'#f4a261', title:'Oppdagelseslæring', def:'Elever avdekker prinsipper og løsninger selv gjennom utforskning, eksperimentering og undersøkelse — i stedet for å bli fortalt svaret. Læreren setter opp betingelsene for oppdagelse.', examples:[{icon:'🔍',scenario:'Feilfinningsoppgave',text:'I stedet for å forklare vanlige feil i et pneumatisk system, gir du hver gruppe et system med en skjult feil og sier: «Noe er galt. Finn det og reparer det.» Elevene oppdager prinsippet gjennom ekte undersøkelse — og husker det mye lenger.'},{icon:'📊',scenario:'Materialtesting',text:'Du gir elevene tre ukjente materialer og spør: «Hvilken vil du bruke til en bærende brakett, og hvorfor?» De tester, sammenligner og resonnerer seg fram til materialegenskaper — og oppdager strekkstyrke og flytegrense gjennom egne konklusjoner.'}]},
+    'spiralpensum': { theory:'Konstruktivisme', color:'#f4a261', title:'Spiralpensum', def:'Gjenbesøke kjernebegreper gjentatte ganger gjennom et kurs, hver gang med større dybde og kompleksitet. Tidligere møter er forenklede; senere legger til nyanser og sofistikering.', examples:[{icon:'🔄',scenario:'Elektrisitet gjennom semesteret',text:'Semester 1: elever lærer at strøm flyter i en krets. Semester 2: de lærer Ohms lov. Semester 3: de anvender den på trefasesystemer. Hvert lag bygger på det forrige — samme grunnleggende begrep, besøkt med økende dybde.'},{icon:'📐',scenario:'Teknisk tegning',text:'Modul 1: elever leser enkle ortografiske projeksjoner. Modul 3: de lager sine egne. Modul 5: de leser og annoterer produksjonstegninger med toleranser. Ferdigheten spiraler fra gjenkjenning til produksjon til kritisk lesing.'}]},
+    'nuz': { theory:'Sosiokulturell teori', color:'#4ecdc4', title:'Nærmeste utviklingssone (NUZ)', def:'Gapet mellom hva en elev kan gjøre selvstendig og hva de kan oppnå med veiledning fra en mer kompetent annen. Dette er den optimale sonen for læring — ikke for lett, ikke umulig.', examples:[{icon:'🪜',scenario:'Sveising av en kompleks skjøt',text:'En elev kan sveise en enkel stumpskjøt alene, men sliter med en T-skjøt i et trangt rom. Med deg ved siden som veileder håndholdning og peker på pølen i sanntid, lykkes de. T-skjøten i et trangt rom er NUZ — og du har nettopp undervist der.'},{icon:'📐',scenario:'Lese komplekse tegninger',text:'En elev kan lese enkle 2D-tegninger men fryser med en full monteringstegning. Du setter deg ved siden og peker på hva du ser på først: «Start med tittelboksen, finn deretter hovedvisningen.» Innen 20 minutter kan de navigere tegningen alene. Det er NUZ i arbeid.'}]},
+    'stillasbygging': { theory:'Sosiokulturell teori', color:'#4ecdc4', title:'Stillasbygging', def:'Midlertidig, strukturert støtte gitt av en lærer eller medelev som gjør det mulig for en elev å oppnå noe de ikke kunne klart selvstendig. Kritisk er det at stillasbygging fjernes etter hvert som kompetansen utvikler seg.', examples:[{icon:'📋',scenario:'Steg-for-steg sjekkliste → selvstendighet',text:'Uke 1: elever følger en 12-trinns oppsettsjekkliste for CNC-maskinen. Uke 4: sjekklisten er redusert til 6 trinn. Uke 8: ingen sjekkliste. Støtten var ekte og nyttig i starten — og ble bevisst fjernet. Det er stillasbygging gjort riktig.'},{icon:'👁️',scenario:'Løste eksempler → blanke oppgaver',text:'Du viser en fullstendig løst hydraulikkberegning på tavlen. Deretter gir du en der elevene fyller inn to steg. Deretter en der de gjør alle stegene. Hvert nivå fjerner ett lag av støtte. Elevene oppnår selvstendighet gradvis.'}]},
+    'mediasjon': { theory:'Sosiokulturell teori', color:'#4ecdc4', title:'Mediasjon', def:'Bruk av kulturelle redskaper — språk, diagrammer, symboler, instrumenter, teknologi — for å koble tenkning og læring. Vi lærer ikke direkte; vi lærer gjennom redskaper som former måten vi tenker på.', examples:[{icon:'📏',scenario:'Skyvelæret som mediatorer',text:'En elevs ubevæpnede øye kan ikke skille 0,1 mm forskjeller. Skyvelæret medierer mellom elevens intensjon (måle nøyaktig) og verden. Å lære dem å bruke det er å lære dem å tenke med et nytt verktøy — ikke bare betjene en enhet.'},{icon:'🗣️',scenario:'Språk som det primære redskapet',text:'Når du sier «Tenk på spenning som trykk og strøm som strømningshastighet», bruker du språk som et medierende redskap. Analogien strukturerer elevens tenkning. Uten språk er begrepet utilgjengelig — med det blir det gripbart.'}]},
+    'mka': { theory:'Sosiokulturell teori', color:'#4ecdc4', title:'Mer kompetent annen (MKA)', def:'Hvem som helst — lærer, medelev, video, manual — som har større ferdighet eller forståelse i det området som læres, og som kan gi veiledning innenfor elevens NUZ.', examples:[{icon:'👩‍🔧',scenario:'Medelev som MKA',text:'En elev som mestret TIG-sveisingsteknikken forrige uke, blir MKA for en elev som akkurat begynner. Du parer dem bevisst. Den erfarne eleven forklarer på enkelt språk fra fersk hukommelse — ofte mer effektivt enn du kan, fordi gapet er mindre.'},{icon:'📱',scenario:'YouTube som MKA',text:'En elev sitter fast på en bestemt dreiebenkteknikk. Du henviser dem til en spesifikk video av en maskinarbeider som demonstrerer den. Videoen blir deres MKA for den ferdigheten. Å erkjenne at læring ikke krever en menneskelig lærer er en sentral innsikt fra sosiokulturell teori.'}]},
+    'situert-laering': { theory:'Sosiokulturell teori', color:'#4ecdc4', title:'Situert læring', def:'Kunnskap er uadskillelig fra konteksten den læres og brukes i. Autentisk læring skjer i ekte, meningsfulle settinger — ikke abstrahert bort fra praksis.', examples:[{icon:'🏭',scenario:'Læring på faktisk arbeidsplass',text:'Elever som lærer rørlegging på et faktisk byggeanlegg, lærer annerledes enn de som øver kun i klasserommet. Støy, tidspress, koordinering med andre og de reelle konsekvensene av feil er alle en del av det som læres — og kan ikke reproduseres i simulering.'},{icon:'🔩',scenario:'Gjøre oppgaven virkelig',text:'I stedet for å be elever beregne dreiemoment som en abstrakt øvelse, gir du dem et ekte bolt som er overtilstramt og knekket. Den ødelagte delen gir beregningen mening: «Det er akkurat derfor du trenger å vite dette.»'}]},
+    'praksisfellesskap': { theory:'Sosiokulturell teori', color:'#4ecdc4', title:'Praksisfellesskap', def:'En gruppe mennesker som deler et håndverk eller en profesjon og lærer sammen gjennom felles deltakelse, historier, verktøy og standarder. Elever beveger seg fra «legitim perifer deltakelse» til fullt medlemskap.', examples:[{icon:'👷',scenario:'Fagklassen som fellesskap',text:'Klassen din har egne normer, språk, standarder og historier. Nye elever lærer delvis ved å observere og absorbere denne kulturen — hvordan erfarne elever snakker om arbeidet, hva de verdsetter, hvordan de løser problemer.'},{icon:'🤝',scenario:'Bedriftsbesøk og mentorer',text:'Når du tar med en praktiserende ingeniør til klassen, eller tar elever på bedriftsbesøk, eksponerer du dem for et eksisterende praksisfellesskap. De begynner å se seg selv som fremtidige medlemmer — noe som er en sterk motivasjonsfaktor.'}]},
+    'kognitiv-belastning': { theory:'Kognitivisme', color:'#9b8fe8', title:'Kognitiv belastning', def:'Arbeidshukommelsen har svært begrenset kapasitet — omtrent 7 informasjonsbiter om gangen. Kognitiv overbelastning oppstår når en oppgave krever mer bearbeiding enn arbeidshukommelsen kan håndtere, og blokkerer læring.', examples:[{icon:'🧠',scenario:'For mye på én gang',text:'Du introduserer en ny maskin ved å forklare historien, sikkerhetsfunksjoner, alle kontroller, vedlikeholdsplan og en kompleks oppgave — alt i én økt. Elever nikker men husker nesten ingenting. Arbeidshukommelsen var full etter de tre første punktene. Løsning: del opp i fokuserte faser.'},{icon:'📌',scenario:'Redusere overflødig belastning',text:'Regnearket ditt har et komplisert oppsett med informasjon spredt over siden, og tvinger elever til å bla frem og tilbake. Å redesigne det slik at all nødvendig informasjon er i én klar visning, frigjør arbeidshukommelse for faktisk tenkning — ikke søking.'}]},
+    'meningsfull-laering': { theory:'Kognitivisme', color:'#9b8fe8', title:'Meningsfull læring', def:'Ny kunnskap læres genuint (ikke bare pugget) når den kobles til eksisterende kunnskap i langtidshukommelsen. Ausubels viktigste innsikt: den viktigste faktoren i læring er hva eleven allerede vet.', examples:[{icon:'🔗',scenario:'Koble til forkunnskaper',text:'Før du underviser hydraulisk trykk, spør du: «Hvem har noen gang klemt en full tannkremtube med lokket på?» Alle rekker opp hånden. «Den følelsen — det er hydraulisk trykk. La oss nå gjøre det presist.» Det nye begrepet fester seg til noe som allerede finnes i langtidshukommelsen.'},{icon:'📚',scenario:'Meningsfull vs. pugging',text:'En elev pugger «P = F/A» til en prøve. En uke senere er det borte. En annen elev forsto det gjennom tannkremanalogien, og anvendte det til å beregne sylinderraft i en ekte oppgave. De husker det seks måneder senere. Det er forskjellen mellom meningsfull og pugget læring.'}]},
+    'blooms-taksonomi': { theory:'Kognitivisme', color:'#9b8fe8', title:'Blooms taksonomi', def:'Et seks-nivå hierarki av kognitive ferdigheter, fra enkel gjenkalling nederst til kompleks skaping øverst. Brukes til å skrive læringsmål, designe vurderinger og sikre at undervisningen utfordrer elever på riktig nivå.', examples:[{icon:'📊',scenario:'Skrive mål på riktig nivå',text:'Et svakt mål: «Elevene skal kjenne til elektrisk sikkerhet.» Et sterkt mål ved hjelp av Bloom: «Elevene skal vurdere et ledningsdiagram og identifisere tre kodebrudd» (Vurdere-nivå). Det andre målet er testbart, meningsfullt og høyerekognitivt.'},{icon:'🔺',scenario:'Strukturere en time',text:'Start av enheten: «Navngi de tre typene sveiseskjøter» (Huske). Midt i enheten: «Forklar når du vil bruke hver enkelt» (Forstå/Anvende). Slutten av enheten: «Design en skjøtløsning for dette konstruksjonsproblemet» (Skape). Bloom gir timeprogresjonens en klar kognitiv kurve.'}]},
+    'metakognisjon': { theory:'Kognitivisme', color:'#9b8fe8', title:'Metakognisjon', def:'Bevissthet om og regulering av egne tenke- og læringsprosesser. En metakognitiv elev vet når de forstår noe, når de ikke gjør det, og hvilken strategi de skal bruke for å fikse det.', examples:[{icon:'🪞',scenario:'«Kan du det egentlig?»-testen',text:'Etter et tema ber du elever lukke notatene og skrive ned alt de vet om det i 3 minutter. Mange oppdager at de ikke kan — de trodde de forsto, men de gjenkjente bare informasjon. Dette er et metakognitivt vekkelsesrop.'},{icon:'🗣️',scenario:'Lære elever å selvovervåke',text:'Du trener elever til å stille seg selv tre spørsmål etter hver økt: «Hva lærte jeg i dag? Hva er jeg fortsatt forvirret over? Hva vil jeg gjøre med den forvirringen før neste time?» Disse tre vanene er kjernen i metakognitiv regulering — og transformerende for selvstendige elever.'}]},
+    'forhandsorganisator': { theory:'Kognitivisme', color:'#9b8fe8', title:'Forhåndsorganisator', def:'En oversikt, ramme eller bro gitt før instruksjon som hjelper elever å koble kommende innhold til eksisterende kunnskap. Den forbereder den kognitive strukturen til å ta imot ny informasjon.', examples:[{icon:'🗺️',scenario:'Helhetsbildet før detaljene',text:'Før en modul om CNC-programmering viser du et ensidig diagram over hele prosessen fra design til ferdig del. «Dette er hele reisen. I dag begynner vi her.» Elever vet nå hvor hver time passer inn — noe som dramatisk forbedrer retention.'},{icon:'🔍',scenario:'En analogi som organisator',text:'Før du underviser PID-kontrollsystemer sier du: «Tenk på det som en sjåfør i tåke: de ser hvor langt de er fra linjen, hvor raskt de drifter, og hva de har gjort — og styrer for å korrigere. PID gjør nøyaktig det samme, men med tall.» Denne analogien fungerer som forhåndsorganisator for det tekniske innholdet.'}]},
+    'spredt-repetisjon': { theory:'Kognitivisme', color:'#9b8fe8', title:'Spredt repetisjon', def:'Å gjenbesøke materiale med økende tidsintervaller forbedrer langtidshukommelsen langt mer enn konsentrert øving (pugging). Hvert hentingsforsøk styrker hukommelsesspor.', examples:[{icon:'📅',scenario:'1-dag, 1-uke, 1-måneds-regelen',text:'Etter å ha undervist hydraulikkberegninger, gjenbesøker du dem kort ved starten av neste time (1 dag), igjen den følgende uken i en 5-minutters quiz, og igjen en måned senere som oppvarming. Elever som får denne spredte praksisen, gjør det bedre enn de som bare så det én gang.'},{icon:'🃏',scenario:'Rask hentepraksis som timestart',text:'Hver time begynner med 5 spørsmål fra tidligere moduler — ikke den nåværende. Elever kjenner til denne rutinen. Det kjennes ut som en quiz, men er egentlig spredt hentepraksis som systematisk styrker langtidshukommelsen gjennom hele kurset.'}]}
+  };
+
+  // ── Modal ──
+  function openConcept(key) {
+    const d = CONCEPTS[key];
+    if (!d) return;
+    const overlay = document.getElementById('concept-modal');
+    const modal = document.getElementById('modal-box');
+    document.getElementById('modal-tag').textContent = d.theory;
+    document.getElementById('modal-tag').style.background = d.color + '22';
+    document.getElementById('modal-tag').style.color = d.color;
+    document.getElementById('modal-title').textContent = d.title;
+    document.getElementById('modal-def').textContent = d.def;
+    modal.style.setProperty('--modal-color', d.color);
+    document.getElementById('modal-examples').innerHTML = d.examples.map(ex => `<div class="modal-example"><span class="ex-icon">${ex.icon}</span><div class="ex-scenario">${ex.scenario}</div><div class="ex-text">${ex.text}</div></div>`).join('');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(e) { if (e.target === document.getElementById('concept-modal')) closeModalDirect(); }
+  function closeModalDirect() { document.getElementById('concept-modal').classList.remove('open'); document.body.style.overflow = ''; }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+  // ── Skuff (mobil) ──
+  function toggleDrawer() { const s = document.querySelector('.sidebar'); const o = document.getElementById('sidebar-overlay'); const b = document.getElementById('hamburger'); const open = s.classList.toggle('drawer-open'); o.classList.toggle('open', open); b.classList.toggle('open', open); }
+  function closeDrawer() { document.querySelector('.sidebar').classList.remove('drawer-open'); document.getElementById('sidebar-overlay').classList.remove('open'); document.getElementById('hamburger').classList.remove('open'); }
+
+  // ── Navigasjon ──
+  function goto(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    const bnav = document.getElementById('bnav-' + id);
+    if (bnav) bnav.classList.add('active');
+    visited.add(id);
+    updateProgress();
+    window.scrollTo(0, 0);
+    closeDrawer();
+    if (id === 'summary') updateSummary();
+  }
+
+  function updateProgress() {
+    const total = 8;
+    const pct = Math.round((visited.size / total) * 100);
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent = pct + '%';
+    const mobPct = document.getElementById('mob-pct');
+    if (mobPct) mobPct.textContent = pct + '%';
+    visited.forEach(v => { const el = document.getElementById('nav-' + v); if (el) el.classList.add('completed'); });
+    persist();
+  }
+
+  // ── Notater ──
+  function saveNote(key, btn) {
+    const ta = document.getElementById('ref-' + key);
+    const text = ta.value.trim();
+    if (!text) return;
+    if (!notes[key]) notes[key] = [];
+    notes[key].push({ text, ts: Date.now(), session: SESSION_ID });
+    persist();
+    ta.value = '';
+    const msg = document.getElementById('saved-' + key);
+    msg.style.opacity = '1';
+    setTimeout(() => { msg.style.opacity = '0'; }, 2000);
+    renderNoteEntry(key);
+  }
+
+  function deleteNote(key, idx) { if (!notes[key]) return; notes[key].splice(idx, 1); persist(); renderNoteEntry(key); }
+
+  function renderNoteEntry(key) {
+    const entries = notes[key] || [];
+    const dispEl = document.getElementById('note-' + key + '-display');
+    const histEl = document.getElementById('note-' + key + '-history');
+    const tsEl = document.getElementById('ts-' + key);
+    if (!dispEl) return;
+    if (entries.length === 0) { dispEl.className = 'no-note'; dispEl.textContent = 'Ingen notat lagret ennå.'; if (histEl) histEl.innerHTML = ''; if (tsEl) tsEl.textContent = ''; return; }
+    const latest = entries[entries.length - 1];
+    dispEl.className = 'note-text';
+    dispEl.textContent = '"' + latest.text + '"';
+    if (tsEl) tsEl.textContent = fmtDate(latest.ts);
+    if (!histEl) return;
+    const older = entries.slice(0, -1);
+    if (older.length === 0) { histEl.innerHTML = ''; return; }
+    let html = '<div class="note-history-label">Tidligere innlegg</div>';
+    older.forEach((e, i) => {
+      const badge = isNewSession(e.ts) ? 'Denne økten' : 'Forrige økt';
+      const badgeColor = isNewSession(e.ts) ? 'rgba(78,205,196,0.15);color:var(--sociocultural)' : 'rgba(255,255,255,0.06);color:var(--muted)';
+      html += `<div class="note-entry"><div class="ne-ts"><span class="ne-badge" style="background:${badgeColor}">${badge}</span>${fmtDate(e.ts)}</div><div class="ne-text">"${e.text}"</div><button class="ne-del" onclick="deleteNote('${key}', ${i})" title="Slett dette innlegget">✕</button></div>`;
+    });
+    histEl.innerHTML = html;
+  }
+
+  function clearAllData() { if (!confirm('Slette alle lagrede notater og fremgang? Dette kan ikke angres.')) return; localStorage.removeItem(LS_KEY); location.reload(); }
+  function updateSummary() { ['behav','const','socio','cogn','final'].forEach(k => renderNoteEntry(k)); }
+  function autosave(key) {
+    const ta = document.getElementById('ref-' + key);
+    if (!ta) return;
+    const dk = LS_KEY + '_draft_' + key;
+    ta.addEventListener('input', () => { try { localStorage.setItem(dk, ta.value); } catch(e) {} });
+    try { const draft = localStorage.getItem(dk); if (draft) ta.value = draft; } catch(e) {}
+  }
+
+  // ── Scenarioer ──
+  function toggleReveal(btn) {
+    const reveal = btn.nextElementSibling;
+    if (reveal.classList.contains('show')) { reveal.classList.remove('show'); btn.textContent = 'Vis analyse ↓'; }
+    else { reveal.classList.add('show'); btn.textContent = 'Skjul analyse ↑'; }
+  }
+
+  // ── Quiz ──
+  const feedbackTexts = {
+    q1: { correct:'Riktig! Skinner utviklet operant betinging gjennom sine berømte forsøk, og viste at konsekvenser former atferd.', wrong:'Ikke helt. Pavlov oppdaget klassisk betinging (hunder og bjeller). Skinner utviklet operant betinging — atferd formet av belønning og straff.' },
+    q2: { correct:'Riktig! Akkomodasjon skjer når eksisterende skjemaer må omstruktureres for å passe inn ny, motstridende informasjon.', wrong:'Ikke helt. Assimilasjon er når ny informasjon passer greit inn i et eksisterende skjema. Akkomodasjon er når selve skjemaet må endres.' },
+    q3: { correct:'Helt riktig. NUZ er rommet mellom hva en elev klarer alene og hva de kan oppnå med ekspertstøtte — og det er der undervisning har størst effekt.', wrong:'Ikke helt. NUZ beskriver gapet mellom en elevs nåværende selvstendige ferdigheter og hva de kan oppnå med veiledning fra en mer kompetent annen.' },
+    q4: { correct:'Riktig. Blooms taksonomi gir lærere et hierarki av kognitive ferdigheter (fra Huske til Skape) for å skrive læringsmål og designe oppgaver på riktig nivå.', wrong:'Blooms taksonomi er et rammeverk for å klassifisere læringsmål etter kognitiv kompleksitet — fra enkel gjenkalling nederst til skaping øverst.' },
+    q5: { correct:'Nøyaktig. Behaviorismen er mest effektiv for å bygge automatiske, konsekvente sikkerhetsrutiner gjennom klare stimulus-respons-forsterkningssykluser.', wrong:'Selv om andre teorier er relevante, er behaviorismen best egnet for å bygge automatiske sikkerhetsrutiner gjennom konsekvent forsterkning.' },
+    q6: { correct:'Riktig! God stillasbygging er alltid designet for å være midlertidig — målet er elevenes selvstendighet, ikke permanent avhengighet av støtte.', wrong:'Stillasbygging er midlertidig støtte. Nøkkelordet er «gradvis fjerning» — læreren gir struktur tidlig og trekker den systematisk tilbake etter hvert som eleven utvikler kompetanse.' },
+    q7: { correct:'Nøyaktig. Metakognisjon — et begrep innført av Flavell — handler om å være bevisst på og regulere sin egen tenkning. Det er en av de mest virkningsfulle ferdighetene du kan undervise.', wrong:'Metakognisjon betyr «tenkning om tenkning». Det er evnen til å overvåke, evaluere og regulere sin egen læring — en nøkkelferdighet for selvstendige elever.' },
+    q8: { correct:'Riktig! En forhåndsorganisator (Ausubel) er en forhåndsvisning som kobler ny læring til forkunnskaper, og gir elevene kognitive kroker for det som kommer.', wrong:'Dette er en forhåndsorganisator, introdusert av David Ausubel. Det er et kognitivt verktøy som hjelper elever å koble nytt innhold til det de allerede vet, før timen begynner.' }
+  };
+
+  function selectOpt(el, qid, isCorrect) { if (quizAnswers[qid] !== undefined) return; el.dataset.correct = isCorrect; document.querySelectorAll('#' + qid + ' .quiz-option').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); }
+
+  function checkQ(qid, btn) {
+    const opts = document.querySelectorAll('#' + qid + ' .quiz-option');
+    let selected = null;
+    opts.forEach(o => { if (o.classList.contains('selected')) selected = o; });
+    if (!selected || btn.classList.contains('answered')) return;
+    const isCorrect = selected.dataset.correct === 'true';
+    quizAnswers[qid] = isCorrect;
+    if (isCorrect) quizScore++;
+    opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else if (o.classList.contains('selected')) o.classList.add('wrong'); });
+    const fb = document.getElementById('fb-' + qid);
+    fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+    fb.textContent = feedbackTexts[qid][isCorrect ? 'correct' : 'wrong'];
+    btn.classList.add('answered');
+    btn.textContent = isCorrect ? '✓ Riktig' : '✗ Feil';
+    if (Object.keys(quizAnswers).length === 8) {
+      const box = document.getElementById('quiz-score');
+      box.classList.add('show');
+      document.getElementById('score-display').textContent = quizScore + '/8';
+      const msgs = ['Prøv igjen — les gjennom teoriene og ta quizen på nytt!','Et solid utgangspunkt. Gå gjennom spørsmålene du bommet på.','Bra jobbet! Du har et sterkt grunnlag.','Utmerket! Du forstår tydelig alle fire teoriene.','Perfekt score! Du er klar til å anvende disse i klasserommet.'];
+      const idx = quizScore <= 3 ? 0 : quizScore <= 4 ? 1 : quizScore <= 5 ? 2 : quizScore <= 7 ? 3 : 4;
+      document.getElementById('score-msg').textContent = msgs[idx];
+      visited.add('quiz');
+      updateProgress();
+    }
+    persist();
+  }
+
+  function restoreQuiz() {
+    Object.entries(quizAnswers).forEach(([qid, isCorrect]) => {
+      const qEl = document.getElementById(qid);
+      if (!qEl) return;
+      qEl.querySelectorAll('.quiz-option').forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); else if (!isCorrect && o.classList.contains('selected')) o.classList.add('wrong'); });
+      const btn = qEl.querySelector('.check-btn');
+      if (btn) { btn.classList.add('answered'); btn.textContent = isCorrect ? '✓ Riktig' : '✗ Feil'; }
+      const fb = document.getElementById('fb-' + qid);
+      if (fb && feedbackTexts[qid]) { fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong'); fb.textContent = feedbackTexts[qid][isCorrect ? 'correct' : 'wrong']; }
+    });
+    if (Object.keys(quizAnswers).length === 8) {
+      const box = document.getElementById('quiz-score');
+      if (box) box.classList.add('show');
+      const scoreEl = document.getElementById('score-display');
+      if (scoreEl) scoreEl.textContent = quizScore + '/8';
+    }
+  }
+
+  function showReturnBanner() {
+    const prevSessions = ['behav','const','socio','cogn','final'].flatMap(k => (notes[k] || [])).filter(e => !isNewSession(e.ts));
+    if (prevSessions.length > 0) {
+      const intro = document.getElementById('sec-intro');
+      if (!intro) return;
+      const banner = document.createElement('div');
+      banner.className = 'return-banner';
+      banner.innerHTML = `<span class="rb-icon">👋</span><div><strong>Velkommen tilbake!</strong> Du har notater fra en tidligere økt. Gå til <button onclick="goto('summary')" style="background:none;border:none;color:var(--sociocultural);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;padding:0;text-decoration:underline">Mine notater &amp; oppsummering</button> for å lese dem.</div>`;
+      const ca = intro.querySelector('.content-area');
+      if (ca) ca.insertBefore(banner, ca.firstChild);
+    }
+  }
+
+  // ── Init ──
+  ['behav','const','socio','cogn','final'].forEach(k => autosave(k));
+  restoreQuiz();
+  updateProgress();
+  updateSummary();
+  showReturnBanner();
+</script>
+</body>
+</html>
